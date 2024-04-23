@@ -1,0 +1,62 @@
+{smcl}
+{* 2feb2012}{...}
+{hline}
+help for {hi:sgmediation}
+{hline}
+
+{title:Sobel-Goodman mediation tests}
+
+{p 8 16 2}{cmd:sgmediation}
+  {it:depvar} [{cmd:if} {it:exp}] [{cmd:in} {it:range}]
+  {cmd:,}
+  {cmd:mv:(}{it:mediatorvar}{cmd:)}
+  {cmd:iv(}{it:indvar}{cmd:)}
+    [ {cmd:cv(}{it:covarlist}{cmd:)} {cmd:quietly} ]
+
+{title:Description}
+
+{p 4 4 2}
+The purpose of the Sobel-Goodman tests are
+to test whether a mediator carries the influence of an IV to a DV.
+
+{p 4 4 2}
+ A variable may be considered a mediator to the extent to which it carries the influence of 
+ a given independent variable (IV) to a given dependent variable (DV). Generally speaking, 
+ mediation can be said to occur when (1) the IV significantly affects the mediator, (2) the 
+ IV significantly affects the DV in the absence of the mediator, (3) the mediator has a 
+ significant unique effect on the DV, and (4) the effect of the IV on the DV shrinks upon 
+ the addition of the mediator to the model.
+ 
+{title:Options}
+{p 4 8 2}{cmd:cv(}{it:covarlist}{cmd:)} Optional list of covariate variables.{p_end}
+{p 4 8 2}{cmd:quietly} Suppresses the individual regression output.{p_end}
+
+{title:Examples}
+
+{p 4 8 2}{cmd:. sgmediation science, mv(read) iv(math)}{p_end}
+{p 4 8 2}{cmd:. sgmediation science, mv(read) iv(math) cv(write)}{p_end}
+
+{p 4 8 2}{cmd:* bootstrap with case resampling}{p_end}
+{p 4 8 2}{cmd:. bootstrap r(ind_eff) r(dir_eff), reps(1000): sgmediation science, mv(read) iv(math)}{p_end}
+{p 4 8 2}{cmd:. estat bootstrap, percentile bc}{p_end}
+
+{p 4 8 2}{cmd:* bootstrap with residual resampling}{p_end}
+{p 4 8 2}{cmd:* need to install resboot_mediation}{p_end}
+{p 4 8 2}{cmd:. findit resboot_mediaton}{p_end}
+{p 4 8 2}{cmd:. resboot_mediation, dv(science) mv(read) iv(math) reps(1000)}{p_end}
+
+{title:Author}
+
+{p 4 4 2}Phil Ender{break}UCLA Statistical Consulting Group
+{break}ender@ucla.edu
+
+{title:References}
+
+{p 4 8 2}Aroian, L. A. (1944). The probability function of the product of two normally distributed variables. 
+{it: Annals of Mathematical Statistics}, {it: 18}, 265-271.{p_end}
+{p 4 8 2}MacKinnon, D. P., & Dwyer, J. H. (1993). Estimating mediated effects in prevention studies. 
+{it: Evaluation Review}, {it: 17}, 144-158.{p_end}
+{p 4 8 2}MacKinnon, D. P., Warsi, G., & Dwyer, J. H. (1995). A simulation study of mediated effect 
+measures. {it:Multivariate Behavioral Research}, {it:30}(1), 41-62.{p_end}
+{p 4 8 2}Preacher, K. J., & Hayes, A. F. (2004).  SPSS and SAS procedures for estimating indirect effects in simple 
+mediation models. {it:Behavior Research Methods, Instruments, & Computers}, {it:36}(4), 717-731.{p_end}
