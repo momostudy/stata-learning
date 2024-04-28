@@ -1,0 +1,106 @@
+{smcl}
+{* 2006.4.16}{...}
+{hline}
+help for {hi:xttr_graph}{right:version1.1    }
+{hline}
+
+
+{title:Graphing after Estimating Panel Threshold Model}
+
+{p 8 14 4}{cmd:xttr_graph} 
+[{cmd:,} {cmdab:m:odel:(}{it:#}{cmd:)}
+{cmdab:t:hres:(}{it:string}{cmd:)}
+{cmdab:l:evle:(}{it:#}{cmd:)}
+{cmdab:w:hite}
+{cmdab:s:ave:(}{it:string}{cmd:)}
+{cmdab:ti:tle:(}{it:string}{cmd:)}
+{cmdab:yt:itle:(}{it:string}{cmd:)}
+{cmdab:xt:itle:(}{it:string}{cmd:)}
+]
+
+{p 4 4 2}{cmd:xttr_graph} only works after {help xtthres}.
+
+
+{title:Description}
+
+{p 4 4 2}
+{cmd:xttr_graph} provides a simple way to graph the confidence intervel construction of panel threshold
+model. You can specify the title, xtitle and ytitle of the graphs. The overall look of the graph can also be 
+specified, i.e. colorful (the default) or white-black.  
+
+{p 4 4 2}
+If you don't satisfy the graph provided by {cmd:xttr_graph}, the return matrix of {help xtthres} can be 
+used to draw graphs flexible. See {help ereturn list}, {help matrix}, {help svmat}, {help twoway line} 
+and {help twoway_options}.
+The return matrix used to draw such graphs are {cmd:e(gama#V)}, {cmd:e(LR#)}, 
+where {it:#} is one of 1, 22, 21 and 3. 
+
+
+{title:Options}
+
+{p 4 8 2}
+{cmd:model(}{it:#}{cmd:)} specifies the model whose graph will be shown. 
+{it:#} can only be {cmd:1} (the single threshold model), {cmd:22} (the first iteration of the double 
+threshold model),
+{cmd:21} (the second iteration of the double threshold model), or {cmd:3} (the triple threshold model).
+The default is 1. When any other number is specified, an error will be given. 
+                    
+{p 4 8 2}
+{cmd:thres(}{it:varname}{cmd:)} specifies the name of threshold variable. The default is the variable name 
+used to fit the model, while you can change the name in graphing with the option {cmd:thres} as you want. 
+
+{p 4 8 2}
+{cmd:level(}{it:#}{cmd:)} specifies the confidence level, in percent, for
+confidence intervals. The default is {cmd:level(95)}; see help {help level}. The change of this option will 
+affect the position of the horizontal line in the graph. 
+
+{p 4 8 2}
+{cmd:white} is used to change the overall look of the graph. When this option is specified, the picture
+shown will be a black-and-white photography. The defult is the STATA-style, which is colorful.
+
+{p 4 8 2}
+{cmd:save} tells STATA to save the graph that will be shown, the {it:string} in {cmd:save(}{it:string}{cmd:)} 
+specifies the name of the graph to be saved. After the graph is saved, it will apper in the working path of 
+STATA, will a name {it:string}.gph. If you want change the save format of the graph, you can right click the 
+graph and select "save as" in the pop-out menu, and then select the format in the "save type" option.
+
+{p 4 8 2}
+{cmd:title, xtitle, ytitle} specifies the corresponding title of the graph. The default value of 
+{cmd:title} is empty, that for  
+{cmd:ytitle} is {it: LR 值}， and for {cmd:xtitle} is the name of threshold variable in the fitted model.
+
+
+{title:Examples}
+
+{p 4 8 2}. xttr_graph{p_end}
+{p 4 8 2}. xttr_graph, m(22) save(fig22){p_end}
+{p 4 8 2}. xttr_graph, m(3) white xtitle("门槛参数（负债率）") yt("LR 检验值"){p_end}
+
+
+{title:Also see}
+
+{p 4 13 2}
+Online:  help for {help xtthres}, {help line}. 
+
+
+{title:Author}
+
+{phang}
+{cmd:Yujun,Lian (Arlion)} Department of Finance, Lingnan College, Sun Yat-Sen University.{break}
+E-mail: {browse "mailto:arlionn@163.com":arlionn@163.com}. {break}
+Blog: {browse "http://blog.cnfol.com/arlion":http://blog.cnfol.com/arlion}. {break}
+Homepage: {browse "http://toran.cn/arlion":http://toran.cn/arlion}. {break}
+{p_end}
+
+
+
+{title:References}
+
+{p 4 8 2}B.E., Hansen. {it:Threshold Effects in Non-Dynamic Panels}: 
+{it:Estimation, Testiong and inference}. Journal of Econometrics, 1999, 93:345-368.{p_end}
+
+
+{p 4 8 2}连玉君，程建. {it:不同成长机会下资本结构与经营绩效之关系研究.} 当代经济科学，2006(2):97-103.{p_end}
+
+
+
