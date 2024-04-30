@@ -1,0 +1,76 @@
+{smcl}
+{* 06/08/2009}{...}
+{cmd:help helm}
+{right:also see:  {help pvar}}
+{right:{help xt}}
+{right:{help var intro}}
+{hline}
+
+{title:Title}
+
+{p2colset 5 20 22 2}{...}
+{p2col :{hi:[XT] pvar} {hline 2}}Helmert Transformation{p_end}
+{p2colreset}{...}
+
+
+
+{title:Syntax}
+
+{p 8 16 2}
+{opt helm} {varlist} {ifin}
+
+{title:Description}
+
+{pstd}
+{cmd:helm} creates forward mean-differenced variables of the variables contained in {it:varlist}. Generated variables are named h_y1, h_y2 ..., with y1, y2 as the names of the original variables. It is recommended to 
+time-demean the data before using {cmd:helm}. You must {cmd:tsset} or {cmd:xtset} your data before using {cmd:helm}, see help {help tsset} or {help xtset}. Please note, that the cross-sectional and the time identifier have to 
+be named "id" and "year" respectively.   
+
+
+{title: Examples}
+
+For examples {help pvar}.
+
+{title:References}
+
+{phang}
+Holtz Eakin, D., W. Newey, and H. Rosen (1988). "Estimating Vector Autoregression with Panel Data," 
+{it:Econometrica}, 56, 1371-1395. (http://www.jstor.org/stable/pdfplus/1913103.pdf){p_end}
+
+{phang}
+Love, I. and Ziccino, L. (2006). "Financial Development and Dynamic Investment Behaviour: 
+Evidence from Panel VAR," {it:Quarterly Review of Economics and Finance}, 46, 190-210. 
+(doi:10.1016/j.qref.2005.11.007){p_end}
+
+
+{title:Acknowledgements}
+
+Help files were written by: 
+
+Christian Danne
+Trinity College Dublin - Department of Economics
+College Green
+Dublin 2
+Ireland
+dannec@tcd.ie
+
+
+
+
+{title:Author}
+
+Inessa Love
+Senior Economist
+Research Department - Finance Group
+The World Bank
+1818 Hst, NW, MC3-639, mailstop MC3-307
+ilove@worldbank.org
+
+{title:Also see}
+
+{psee}
+{help pvar}, {help var intro}, {help xt}{break}
+{p_end}
+
+
+
