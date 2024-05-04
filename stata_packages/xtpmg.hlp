@@ -1,0 +1,153 @@
+{smcl}
+{* 10oct2006}{...}
+{cmd:help xtpmg} {right:dialog:  {bf:{dialog xtpmg} {space 14}}}
+{hline}
+
+{title:Title}
+
+{p2colset 5 21 23 2}{...}
+{p2col :{hi:xtpmg} {hline 2}}Pooled Mean-Group, Mean-Group, and
+Dynamic Fixed Effects Models{p_end}
+{p2colreset}{...}
+
+
+{title:Syntax}
+
+{p 8 16 2}{cmd:xtpmg} {depvar} [{indepvars}] {ifin} [{cmd:,} {it:options}]
+
+
+{synoptset 22 tabbed}{...}
+{synopthdr}
+{synoptline}
+{syntab:Model}
+{synopt :{opth lr:(varlist)}}terms to be included in long-run cointegrating vector (Note the
+difference in sign from Pesaran's specification){p_end}
+{synopt :{opt nocons:tant}}suppresses constant term{p_end}
+{synopt :{opth cl:uster(varname)}}adjust standard errors for intragroup
+correlation{p_end}
+{synopt :{opth ec:(string)}}name of newly created error-correction term{p_end}
+{synopt :{opth const:raints(string)}}constraints to be applied to the model{p_end}
+{synopt :{opt replace}}overwrite error correction term, if it exists{p_end}
+{synopt :{opt full}}display all panel regressions for MG and PMG models{p_end}
+{synopt :{opt pmg|mg|fe}}specifies the panel data specification. {opt pmg} estimates Pesaran's
+Pooled Mean-Group Model, {opt mg} estimates the Mean-Group Model, and {opt fe} estimates
+the Dynamic Fixed Effects Model. {opt pmg} is the default.{p_end}
+
+{syntab:Maximum Likelihood Options}
+{p 6 6 2} {it:Only valid with} {cmd:pmg}.{p_end}
+{synopt :{opt tech:nique(algorithm)}}specifies the {cmd:ml} maximization technique{p_end}
+{synopt :{opt diff:icult}}will use a different stepping algorithm in non-concave
+regions of the likelihood see{p_end}
+{p 6 6 2 }
+See {helpb ml##model_options:ml model_options} for a description of available options.
+
+{syntab:Reporting}
+{synopt :{opt l:evel(#)}}set confidence level; default is {cmd:level(95)}{p_end}
+
+{synoptline}
+{p2colreset}{...}
+{p 4 6 2}
+You must {cmd:tsset} your data before using {cmd:xtpmg}; see {helpb tsset}.{p_end}
+{p 4 6 2}
+{it:varlists} may contain time-series operators; see
+{help tsvarlist}.{p_end}
+
+
+
+{title:Description}
+
+{pstd}
+{cmd:xtpmg} aids in the estimation of large {it:N} and large {it:T} panel-data models where
+nonstationarity may be a concern. In addition to the traditional dynamic fixed effects models,
+{cmd:xtpmg} allows for the pooled mean group and mean group estimators. Consider the model
+
+{p 4 12 2}d.y_it = {bind: phi*(y_(it-1)+beta*x_(it))} + {bind:d.y_(it-1)a_1}+... +
+{bind:y_(it-p)a_p} +
+{bind:d.x_(it)b_1}+...+{bind:d.x_(it-q)b_q} + e_(it) {space 4} i={(1,...,N}; {space 3} t={(1,...,T_i)},
+
+where
+{p 4 12 2}phi is the error correction speed of adjustment parameter to be estimated
+
+{p 4 12 2} beta is a (k X 1) vector of parameters{p_end}
+
+{p 4 12 2}a_1,...,a_p are p parameters to be estimated{p_end}
+
+{p 4 12 2}x_(it) is a (1 X k) vector of covariates{p_end}
+
+{p 4 12 2}b_1,...,b_q are q parameters to be estimated{p_end}
+
+{p 4 12 2}and e_(it) is the error term. The assumed distribution of the error
+term depends on the model estimated.{p_end}
+
+
+{title:Options}
+
+{dlgtab:Model}
+
+{phang}
+{opt constraints(constraints)}, {opt noconstant}; see {help estimation options}. (Note: Constraints are
+applied post-estimation)
+
+{phang}
+{opth lr(varlist)} specifies the variables to be included in the cointegrating vector.
+For identification purposes, the first listed variable will have its coefficient normalized to 1.
+
+{phang}
+{opth ec(string)} specifies the name of a new variable to be created in the dataset to hold the
+error-correction term. The default is __ec.
+
+{phang}
+{opth cluster(varname)}; see
+    {help estimation options##robust:estimation options}.
+
+{phang}
+{opt replace} replaces the error correction variable in memory, if it exists.
+
+{phang}
+{opt full} displays all panel estimation output (for the mean-group and pooled mean-group models).
+ 
+{phang}
+{cmd:pmg|mg|fe} selects the desired estimation procedure. {cmd:pmg} estimates the pooled mean-group
+model where the long-run effects, beta, are constrained to be equal across all panels.
+The short-run coefficients, including phi, are allowed
+to differ across panels. {cmd:mg} estimates the mean-group model where the coefficients
+of the model are calculated from the unweighted average of the unconstrained, fully
+heterogeneous model. {cmd:fe} estimates
+the dynamic fixed effects model where all parameters, except intercepts, are
+constrained to be equal across panels.
+{cmd:pmg} is the default.
+
+{dlgtab:Maximum Likelihood Options}
+
+{phang}
+{opt technique(algorithm)} specifies {cmd:ml} optimization technique. 
+See {helpb ml##model_options:ml model_options} 
+for more information.
+The {cmd:bhh} algorithm is not allowed.
+This option is only valid with the
+{cmd:pmg} model.
+
+{phang}
+{opt level(#)}; see {help estimation options##level():estimation options}.
+
+{title:Examples}
+
+{phang}{cmd:. xtpmg d.c d.y d.pi, lr(l.c y pi) full}
+
+{phang}{cmd:. xtpmg d.c d(1/2).y d.pi if year>1962, ec(ec) lr(l.c y pi) mg replace}
+
+{phang}{cmd:. xtpmg d.c d.y d.pi, lr(l.c y pi) fe}
+
+{phang}{cmd:. cons def 1 [ec]y=.75}{p_end}
+{phang}{cmd:. xtpmg d.c d.y d.pi, lr(l.c y pi) mg const(1) replace ec(ec)}
+
+{title:Also see}
+
+{psee}
+Manual:  {bf:[XT] xt}
+
+{psee}
+{helpb xtdata}, {helpb xtdes},
+{helpb xtreg}, {helpb xtsum},
+{helpb xttab}; {helpb tsset}
+{p_end}
