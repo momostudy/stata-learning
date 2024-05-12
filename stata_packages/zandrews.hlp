@@ -1,0 +1,85 @@
+{smcl}
+{* 03Dec2003}{...}
+{hline}
+help for {hi:zandrews} 
+{hline}
+
+{title:{cmd:Zivot-Andrews Unit Root test allowing for a single break in intercept and/or trend}}
+
+{p 8 14}{cmdab:zandrews} [{it:varname}] [{cmd:if} {it:exp}]
+[{cmd:in} {it:range}] [{cmd:,} {cmdab:maxlags(}{it:#}{cmd:)} {cmdab:trim(}{it:#}{cmd:)} 
+{cmdab:break(}{it:}{cmd:)} {cmdab: generate(}{it:varname}{cmd:)} {cmdab:lagmethod(}{it:}{cmd:)} 
+{cmdab: level(}{it:#}{cmd:)} {cmdab: graph}]
+
+
+{p 8 14}{cmdab:zandrews} is for use with time-series data. You must {it:tsset} your data before using these routines. 
+{it:Varname} may contain time-series operators. {cmdab:zandrews} may be applied to a single time
+series within a panel.
+
+{title:Description}
+
+{p}{cmd:zandrews} computes the Zivot-Andrews (1992) unit root test for {it:varname}. 
+ 
+
+{title:Options}
+
+{p 0 4}{cmd:maxlags(}{it:#}{cmd:)} specifies the number of additional lags or the maximum number of lags to consider. 
+It must be a positive integer. If not specified, T^0.25 is used. Maxlags must be given with lagmethod (input).
+
+{p 0 4}{cmd:trim(}{it:#}{cmd:)} specifies the fraction of data range to skip at either 
+end when examining possible break points. It has a default value of fifteen percent (0.15). 
+TRIM must be a positive real number greater than 0 and less than 0.25.
+
+{p 0 4}{cmd:break(}{cmd:)} selects which elements of the process are allowed to have a break. BREAK can be INTERCEPT, TREND, or BOTH. 
+The default selection is intercept. 
+
+{p 0 4}{cmd:lagmethod(}{cmd:)} Selects the method for deciding the number of additional lags. If INPUT, 
+the number of lags given by the MAXLAGS option is used. If AIC, the AIC-minimizing value is used.
+If BIC, the BIC-minimizing value is used. If TTEST, the number of lags is that for which the last 
+included lag has a marginal significance level less than the cutoff given by the LEVEL option.
+ 
+
+{p 0 4}{cmd:level(}{it:#}{cmd:)} specifies the cutoff significance level for LAGMETHOD=TTEST. 
+It has a default value of 0.10. LEVEL must be a real number between 0 and 0.25.
+
+{p 0 4}{cmd:graph} requests a graph of the unit-root test statistics for the different break points. 
+The default is NOGRAPH.
+
+{title:Examples}
+
+{p 8 12}{stata "webuse turksales" :. webuse turksales}{p_end}
+
+{p 8 12}{stata "dfuller sales" :. dfuller sales} {p_end}
+{p 8 12}{stata "zandrews sales, graph" :. zandrews sales, graph} {p_end}	
+{p 8 12}{stata "zandrews sales, break(trend)" :. zandrews sales, break(trend)} {p_end}	
+{p 8 12}{stata "zandrews sales, break(both) trim(0.10)" :. zandrews sales, break(both) trim(0.10)} {p_end}	
+{p 8 12}{stata "zandrews sales, lagmethod(BIC)" :. zandrews sales, lagmethod(BIC)}{p_end}	 
+{p 8 12}{stata "zandrews D.sales, graph" :. zandrews D.sales, graph}{p_end}
+	
+{p 8 12}{stata "webuse grunfeld" :. webuse grunfeld}{p_end}
+
+{p 8 12}{stata "zandrews invest if company==3, break(trend) graph" :. zandrews invest if company==3, break(trend) graph} {p_end}	
+
+
+{title:References}
+
+Andrews, D., Zivot, E. 1992. Further evidence on the Great Crash, the oil price shock, and 
+the unit-root hypothesis. Journal of Business and Economic Statistics 10, 251-70.
+
+{title:Acknowledgements}
+
+{p 0 4} This module was translated from RATS code. Much of the work of implementing
+and testing its features was done by Margaret Green, sponsored by an Undergraduate 
+Research Assistantship from the College of Arts
+and Sciences, Boston College.
+
+{title:Author}
+
+{p 0 4} Christopher F. Baum (baum@bc.edu) Boston College
+
+
+{title:Also see} 
+
+{cmdab:dfuller}, {cmdab:dfgls}
+
+

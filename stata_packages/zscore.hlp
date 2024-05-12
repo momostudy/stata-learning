@@ -1,0 +1,62 @@
+{smcl}
+{* 22jul2010}{...}
+{hline}
+help for {hi:zscore}
+{hline}
+
+{title:Create new variable(s) containing standardized z-scores}
+
+{p 8 14}{cmd:zscore} {it:varlist} [{it:weights}] [{cmd:if}] [{cmd:in}]
+[{cmd:, stub(}{it:stubname}{cmd:)} {cmd:{ul:l}istwise} ]
+
+{p 4 4 2}
+{cmd:aweight}s, {cmd:fweight}s, and {cmd:iweight}s are allowed; see help
+{help weights}.
+
+
+{title:Description}
+
+{p}{cmd:zscore} will create a new variable or variables, depending on
+{it:varlist}, that contains the standardized z-scores.
+
+
+{title:Options}
+
+{p 0 4}{cmd:stub(}{it:stubname}{cmd:)} specifies the prefix that will be given
+to the new variable(s).  If {cmd:stub()} is not specified, the default
+{it:stubname} is "z_".
+
+{p 0 4}{cmd:listwise} deletes missing values listwise, i.e., observations
+with missing values on any of the variables are omitted (and receive the
+system missing value ".").
+
+
+{title:Authors}
+
+{p 8}Shannon Driver, Stata Corporation{p_end}
+{p 8}srd@stata.com{p_end}
+
+{p 8 12}Jurjen Iedema, The Netherlands Institute for Social Research / SCP, The
+Hague, the Netherlands{p_end}
+
+
+{title:Examples}
+
+{p 8 12}{inp:. zscore price}
+
+{p 8 12}{inp:. zscore price weight mpg}
+
+{p 8 12}{inp:. zscore price weight mpg if mpg > 20}
+
+{p 8 12}{inp:. zscore price weight mpg in 5/20}
+
+{p 8 12}{inp:. zscore price weight mpg, stub(zscore_)}
+
+{p 8 12}{inp:. zscore price weight mpg, listwise}
+
+{p 8 12}{inp:. zscore price weight mpg if mpg > 20 in 5/20, stub(zscore_) listwise}
+
+
+{title:Also see}
+
+{p 0 19}On-line:  help for {help generate}, {help summarize}{p_end}
