@@ -1,0 +1,123 @@
+{smcl}
+{* 09nov2007}{...}
+{cmd:abar}{right:({browse "http://www.stata-journal.com/article.html?article=up0038":SJ12-4: st0159_1})}
+{hline}
+{pstd}
+Warning: This version of {cmd:abar} may be out of date.  To ensure that you
+have the latest version, type or click on
+{stata "ssc install abar, replace":{bf:ssc install abar, replace}},
+and then restart Stata.
+
+
+{title:Title}
+
+{p2colset 5 13 15 2}{...}
+{p2col :{hi:abar} {hline 2}}Arellano-Bond test for autocorrelation
+{p2colreset}{...}
+
+
+{title:Syntax}
+
+{p 8 16 2}
+{cmd:abar}
+{ifin} [{cmd:,} {opt l:ags(#)}]
+
+{p 4 4 2}
+{cmd:abar} is for use after {helpb regress}, {helpb ivreg2}, {helpb ivregress},
+{helpb newey}, and {helpb newey2}.
+
+{p 4 4 2}{cmd:abar} is for use with cross-section time-series data.
+You must {helpb tsset} your data before using {cmd:abar}.
+
+
+{title:Description}
+
+{p 4 4 2}{cmd:abar} performs the Arellano-Bond (1991) test for
+autocorrelation.  The test was originally proposed for a particular linear
+generalized method of moments dynamic panel data estimator but is quite
+general in its applicability -- more general than {helpb estat dwatson},
+{helpb estat durbinalt}, {helpb estat bgodfrey}, and {helpb xtserial}.
+It can be applied to linear GMM regressions in general and thus to the
+special cases of ordinary least squares (OLS) and two-stage least-squares
+(2SLS).  It can also be made consistent in the presence of various patterns of
+error covariance.  Specifically, {cmd:abar} will run after {helpb regress},
+{helpb ivreg2}, {helpb ivreg2, gmm2s}, and {helpb ivregress 2sls}
+in their "plain" (homoskedastic) and their {cmd:robust} and
+{cmd:cluster()} variants.  {cmd:abar} will also run after regressions using
+the Bartlett/Newey-West kernel, whether performed by {helpb newey},
+{helpb newey2}, {helpb ivreg2}, or {helpb ivregress}.
+
+{p 4 4 2}{cmd:abar} is not appropriate for fixed-effects regressions for
+dynamic models, assuming those are done via a mean-deviation transformation.
+This is because the Arellano-Bond AR() test assumes that right-hand-side
+variables are not "post-determined", that is, not correlated with future
+errors.  In a dynamic setting, future values of regressors can depend on
+future errors.  After the mean-deviations transformation, future values of
+the original regressors affect current values of the transformed
+versions.{p_end}
+
+
+{title:Option}
+
+{p 4 8 2}{opt lags(#)} specifies the maximum number of lags over which to test
+for AR() autocorrelation.  {cmd:abar} will perform separate tests for each lag
+up to the maximum.  The default is {cmd:lags(1)}.
+
+
+{title:Examples}
+
+{p 4 8 2}{stata "use http://www.stata-press.com/data/r7/abdata.dta":. use http://www.stata-press.com/data/r7/abdata.dta}{p_end}
+{p 4 8 2}{cmd:. * Make a close match with first regression (OLS) in abest2.out, in http://www.nuff.ox.ac.uk/Users/Doornik/software/dpdox121.zip}{p_end}
+{p 4 8 2}{cmd:. * Differs because Stata's} {help regress} {cmd:does small-sample correction.}{p_end}
+{p 4 8 2}{stata "regress n L(1/2).n L(0/1).w L(0/2).(k ys) yr1979-yr1984, cluster(id)":. regress n L(1/2).n L(0/1).w L(0/2).(k ys) yr1979-yr1984, cluster(id)}{p_end}
+{p 4 8 2}{stata "abar, lags(2)":. abar, lags(2)}{p_end}
+{p 4 8 2}{cmd:. * Now do a perfect match with last regression (2SLS, Anderson-Hsiao) in same file.}{p_end}
+{p 4 8 2}{stata "ivreg2 D.n DL2.n DL(0/1).w DL(0/2).(k ys) yr1980-yr1984 (DL.n = L3.n), cluster(id)":. ivreg2 D.n DL2.n DL(0/1).w DL(0/2).(k ys) yr1980-yr1984 (DL.n = L3.n), cluster(id)}{p_end}
+{p 4 8 2}{stata "abar, lags(2)":. abar, lags(2)}{p_end}
+{p 4 8 2}{cmd:. * Now do same via }{help xtabond2}{p_end}
+{p 4 8 2}
+{stata "xtabond2 D.n DL(1/2).n DL(0/1).w DL(0/2).(k ys) y*98*,iv(L3.n DL2.n DL(0/1).w DL(0/2).(k ys) y*98*,eq(lev)) rob arle":. xtabond2 D.n DL(1/2).n DL(0/1).w DL(0/2).(k ys) y*98*,iv(L3.n DL2.n DL(0/1).w DL(0/2).(k ys) y*98*,eq(lev)) rob arle}
+{p_end}
+
+
+{title:Citation}
+
+{pstd}{cmd:abar} is not an official Stata command.
+It is a free contribution to the research community.
+Please cite it as such: {p_end}
+
+{p 8 8 2}Roodman, D. 2009. How to Do xtabond2: An introduction
+to difference and system GMM in Stata. {it:Stata Journal} 9: 86-136.{p_end}
+
+
+{title:References}
+
+{p 4 8 2}Arellano, M. and S. Bond. 1991.
+Some tests of specification for panel data: Monte Carlo evidence and an
+application to employment equations. {it:The Review of Economic Studies} 58:
+277-297.{p_end}
+
+{p 4 8 2}Roodman, D. 2006. How to do xtabond2: An Introduction to difference
+and system GMM in Stata.
+{browse "http://www.stata-journal.com/article.html?article=st0159":{it:Stata Journal} 9: 86-136}.{p_end}
+
+
+{title:Author}
+
+{p 4}David Roodman{p_end}
+{p 4}Senior Fellow{p_end}
+{p 4}Center for Global Development{p_end}
+{p 4}Washington, DC{p_end}
+{p 4}droodman@cgdev.org{p_end}
+
+
+{title:Also see}
+
+{p 4 14 2}Article:  {it:Stata Journal}, volume 12, number 4: {browse "http://www.stata-journal.com/article.html?article=up0038":st0159_1},{break}
+                    {it:Stata Journal}, volume 9, number 1: {browse "http://www.stata-journal.com/article.html?article=st0159":st0159}
+
+{p 7 14 2}
+Help:  {helpb regress}, {helpb ivreg2}, {helpb estat dwatson},
+{helpb estat durbinalt}, {helpb estat bgodfrey},
+{helpb xtserial}, {helpb xtabond2}
+{p_end}
