@@ -1,0 +1,584 @@
+{smcl}
+{* 14 July 2014}{...}
+{hline}
+help for {hi:xtabond2}
+{hline}
+
+{title:"Difference" and "system" GMM dynamic panel estimator}
+
+{p 8 16 2}{cmd:xtabond2}
+{it:depvar}
+{it:varlist} [{cmd:if} {it:exp}] [{cmd:in} {it:range}]
+[{it:weight}]
+[{cmd:,} 
+{cmdab:l:evel:(}{it:#}{cmd:)}
+{cmdab:svm:at}
+{cmdab:svv:ar}
+{cmdab:two:step}
+{cmdab:r:obust}
+{cmdab:cl:uster(}{it:varlist}{cmd:)}
+{cmdab:noc:onstant}
+{cmdab:sm:all}
+{cmdab:nol:eveleq}
+{cmdab:or:thogonal}
+{cmd:gmmopt} [{cmd:gmmopt} {it:...}]
+{cmd:ivopt} [{cmd:ivopt} {it:...}]
+{cmd:pca}
+{cmdab:comp:onents:(}{it:#}{cmd:)}
+{cmdab:ar:tests:(}{it:#}{cmd:)}
+{cmdab:arl:evels}
+{cmdab:h:(}{it:#}{cmd:)}
+{cmdab:nod:iffsargan}
+{cmdab:nom:ata}]
+
+{p 4 4 2}
+where {cmd:gmmopt} is 
+
+{p 8 16 2}{cmdab:gmm:style(}{it:varlist} [{cmd:,} {cmdab:lag:limits(}{it:#} {it:#}{cmd:)} {cmdab:c:ollapse} {cmdab:o:rthogonal} {cmdab:e:quation}{cmd:(}{c -(}{cmdab:d:iff} | {cmdab:l:evel} | {cmdab:b:oth}{c )-}{cmd:)} {cmdab:p:assthru} 
+{cmdab:sp:lit}]{cmd:)} 
+
+{p 4 4 2}
+and {cmd:ivopt} is 
+
+{p 8 16 2}{cmdab:iv:style(}{it:varlist} [{cmd:,} {cmdab:e:quation}{cmd:(}{c -(}{cmdab:d:iff} | {cmdab:l:evel} | {cmdab:b:oth}{c )-}{cmd:)} {cmdab:p:assthru} {cmdab:mz:}]{cmd:)} 
+
+{p 4 4 2}{cmd:aweight}s, {cmd:pweight}s, and {cmd:fweight}s are allowed. {cmd:fweights} must be constant over time. See help {help weights}.
+
+{p 4 4 2}
+{cmd:xtabond2} is for use with cross-section time-series data.
+You must {cmd:tsset} your data before using {cmd:xtabond2}; see help
+{help tsset}.
+
+{p 4 4 2}
+All {it:varlist}s may contain time-series operators and, in Stata version 11 or later, factor 
+variables. See help {help varlist}.
+
+{p 4 4 2}
+{cmd:by} {it:...} {cmd::} may be used with {cmd:xtabond2} if no time-series operators are used in the command line.
+The {cmd:by} clause will not restrict the sample from which lags are drawn in building instruments. See help
+{help by}.
+
+{p 4 4 2}
+{cmd:xtabond2} shares features of all estimation commands; see
+help {help estcom}.
+
+{p 4 4 2}
+"Version" syntax:{p_end}
+
+{p 8 16 2}{cmd:xtabond2,} {cmdab:vers:ion}{p_end}
+
+{p 4 4 2}
+The syntax of {help predict} following {cmd:xtabond2} is{p_end}
+
+{p 8 16 2}{cmd:predict} [{it:type}] {it:newvarname} [{cmd:if} {it:exp}] [{cmd:in} {it:range}] [{cmd:,} {it:statistic}] [{cmdab:diff:erence}]{p_end}
+
+{p 4 4 2}
+where {it:statistic} is
+
+{p 8 25 2}{cmd:xb}{space 10}bx_it, fitted values (the default){p_end}
+{p 8 25 2}{cmdab:re:siduals}{space 3}u_it, the residuals{p_end}
+
+
+{title:Donate?}
+
+Has {cmd:xtabond2} improved your expertise, career, or marriage?
+Consider giving back through a {browse "http://j.mp/1nO0dlU":donation} to support the work of its self-employed author, {browse "http://davidroodman.com":David Roodman}.
+
+{title:Description}
+
+{p 4 4 2}
+{cmd:xtabond2} can fit two closely related dynamic panel data models.
+The first is the Arellano-Bond (1991) estimator, which is also available with {cmd:xtabond}, though without the two-step standard error correction described below.
+It is sometimes called "difference GMM."
+The second is an augmented version outlined by Arellano and Bover (1995) and fully developed by Blundell and Bond (1998).
+It is known as "system GMM."
+Roodman (2009) provides a pedagogic introduction to linear GMM, these estimators, and {cmd:xtabond2}.
+The estimators are designed for dynamic "small-T, large-N" panels that may contain fixed effects and--separate from those fixed effects--idiosyncratic errors that are heteroskedastic and correlated within but not across individuals.
+Consider the model:
+
+{p 4 12 2}y_it = {bind:x_it * b_1} + {bind:w_it * b_2} + u_it
+{space 4} i=1,...,N; {space 3} t=1,...,T{p_end}
+{p 4 12 2}u_it = v_i + e_it,{p_end}
+
+ where
+
+{p 4 12 2}v_i are unobserved individual-level effects;{p_end}
+
+{p 4 12 2}e_it are the observation-specific errors;{p_end}
+
+{p 4 12 2}x_it is a vector of strictly exogenous covariates (ones dependent on neither current nor past e_it);{p_end}
+
+{p 4 12 2}w_it is a vector of predetermined covariates (which may include the lag of y) and endogenous covariates, all of which may be correlated with the v_i
+(Predetermined variables are potentially correlated with past errors.
+Endogenous ones are potentially correlated with past and present errors.);{p_end}
+
+{p 4 12 2}b_1 and b_2 are vectors of parameters to be estimated;{p_end}
+
+{p 4 4 2}and E[v_i]=E[e_it]=E[v_i*e_it]=0, and E[e_it*e_js]=0 for each i, j, t, s, i<>j.{p_end}
+
+{p 4 4 2}First-differencing the equation removes the v_i, thus eliminating a potential source of omitted variable bias in estimation.
+However, differencing variables that are predetermined but not strictly exogenous makes them endogenous since the {bind:w_it} in some {bind:D.w_it = w_it – w_i,t-1} is correlated with the {bind:e_i,t-1} in {bind:D.e_it}.
+Following Holt-Eakin, Newey, and Rosen (1988), Arellano and Bond (1991) develop a Generalized Method of Moments estimator that instruments the differenced variables that are not strictly exogenous with all their available lags in levels.
+(Strictly exogenous variables are uncorrelated with current and past errors.) Arellano and Bond also develop an appropriate test for autocorrelation, which, if present, can render some lags invalid as instruments.{p_end}
+
+{p 4 4 2}A problem with the original Arellano-Bond estimator is that lagged levels are poor instruments for first differences if the variables are close to a random walk.
+Arellano and Bover (1995) describe how, if the original equation in levels is added to the system, additional instruments can be brought to bear to increase efficiency.
+In this equation, variables in {it:levels} are instrumented with suitable lags of their own {it:first differences}.
+The assumption needed is that these differences are uncorrelated with the unobserved country effects.
+Blundell and Bond show that this assumption in turn depends on a more precise one about initial conditions.
+{p_end}
+
+{p 4 4 2}{cmd:xtabond2} implements both estimators--twice.
+The version in Stata’s ado programming language is slow but compatible with Stata 7 and 8.
+The Mata version is usually faster, and runs in Stata 10.0 or later.
+The {cmd:xtabond2} option {cmd:nomata} prevents the use of Mata even when it is available.{p_end}
+
+{p 4 4 2}The Mata version also includes the option to use the forward orthogonal deviations transform instead of first differencing.
+Proposed by Arellano and Bover (1995) the orthogonal deviations transform, rather than subtracting the previous observation, subtracts the average of all available future observations.
+The result is then multiplied by a scale factor chosen to yield the nice but relatively unimportant property that if the original e_it are i.i.d., then so are the transformed ones (see Arellano and Bover (1995) and Roodman (2009)).
+Like differencing, taking orthogonal deviations removes fixed effects.
+Because lagged observations of a variable do not enter the formula for the transformation, they remain orthogonal to the transformed errors (assuming no serial correlation), and available as instruments.
+In fact, for consistency, the software stores the orthogonal deviation of an observation one period late, so that, as with differencing,
+observations for period 1 are missing and, for an instrumenting variable w, w_i,t-1 enters the formula for the transformed observation stored at i,t.
+With this move, exactly the same lags of variables are valid as instruments under the two transformations.{p_end}
+
+{p 4 4 2}On balanced panels, GMM estimators based on the two transforms return numerically identical coefficient estimates, holding the instrument set fixed (Arellano and Bover 1995).
+But orthogonal deviations has the virtue of preserving sample size in panels with gaps.
+If some e_it is missing, for example, neither D.e_it nor D.e_i,t+1 can be computed.
+But the orthogonal deviation can be computed for every complete observation except the last for each individual.
+(First differencing can do no better since it must drop the first observation for each individual.) Note that "difference GMM" is still called that even when orthogonal deviations are used.
+We will refer to the equation in differences or orthogonal deviations as the {it:transformed} equation.
+In system GMM with orthogonal deviations, the levels or {it:untransformed} equation is still instrumented with differences as described above.{p_end}
+
+{p 4 4 2}{cmd:xtabond2} reports the Arellano-Bond test for autocorrelation, which is applied to the differenced residuals in order to purge the unobserved and perfectly autocorrelated v_i.
+AR(1) is expected in first differences, because D.e_i,t = e_i,t - e_i,t-1 should correlate with D.e_i,t-1 = e_i,t-1 - e_i,t-2 since they share the e_i,t-1 term.
+So to check for AR(1) in levels, look for AR(2) in differences, on the idea that this will detect the relationship between the e_i,t-1 in D.e_i,t  and the e_i,t-2 in D.e_i,t-2.
+This reasoning does not work for orthogonal deviations, in which the residuals for an individual are all mathematically interrelated, thus contaminated from the point of view of detecting AR in the e_it.
+So the test is run on differenced residuals even after estimation in deviations.
+Autocorrelation indicates that lags of the dependent variable (and any other variables used as instruments that are not strictly exogenous), are in fact endogenous, thus bad instruments.
+For example, if there is AR(s), then y_i,t-s would be correlated with e_i,t-s, which would be correlated with D.e_i,t-s, which would be correlated with D.e_i,t.{p_end}
+
+{p 4 4 2}{cmd:xtabond2} also reports tests of over-identifying restrictions--of whether the instruments, as a group, appear exogenous.
+For one-step, non-robust estimation, it reports the Sargan statistic, which is the minimized value of the one-step GMM criterion function.
+The Sargan statistic is not robust to heteroskedasticity or autocorellation. 
+So for one-step, robust estimation (and for all two-step estimation), {cmd:xtabond2} also reports the Hansen {it:J} statistic, which is the minimized value of the two-step GMM criterion function, and is robust.
+{cmd:xtabond2} still reports the Sargan statistic in these cases because the {it:J} test has its own problem: it can be greatly weakened by instrument proliferation.
+The Mata version goes further, reporting difference-in-Sargan statistics (really, difference-in-Hansen statistics, except in one-step robust estimation), which test for whether subsets of instruments are valid.
+To be precise, it reports one test for each group of instruments defined by an {cmd:ivstyle()} or {cmd:gmmstyle()} option (explained below).
+So replacing {cmd:gmmstyle(x y)} in a command line with {cmd:gmmstyle(x) gmmstyle(y)} will yield the same estimate but distinct difference-in-Sargan/Hansen tests.
+In addition, including the {cmdab:sp:lit} suboption in a {cmd:gmmstyle()} option in system GMM splits an instrument group in two for difference-in-Sargan/Hansen purposes,
+one each for the transformed equation and levels equations.
+This is especially useful for testing the instruments for the levels equation based on lagged differences of the dependent variable, which
+are the most suspect in system GMM and the subject of the "initial conditions" in the title of Blundell and Bond (1998).
+In the same vein, in system GMM, {cmd:xtabond2} also tests all the GMM-type instruments for the levels equation as a group.
+All of these tests, however, are weak when the instrument count is high.
+Difference-in-Sargan/Hansen tests are are computationally intensive since they involve re-estimating the model for each test; the {cmd:nodiffsargan} option is available to prevent them.{p_end}
+
+{p 4 4 2}As linear GMM estimators, the Arellano-Bond and Blundell-Bond estimators have one- and two-step variants.
+But though two-step is asymptotically more efficient, the reported two-step standard errors tend to be severely downward biased (Arellano and Bond 1991; Blundell and Bond 1998).
+To compensate, {cmd:xtabond2} makes available a finite-sample correction to the two-step covariance matrix derived by Windmeijer (2005).
+This can make two-step robust estimations more efficient than one-step robust, especially for system GMM.
+
+{p 4 4 2}The syntax of {cmd:xtabond2} differs substantially from that of {cmd:xtabond} and {cmd:xtdpdsys}.
+{cmd:xtabond2} almost completely decouples specification of {it:regressors} from specification of {it:instruments}.
+As a result, most variables used will appear twice in an {cmd:xtabond2} command line.
+{cmd:xtabond2} requires the initial {it:varlist} of the command line to include all regressors except for the optional constant term, be they strictly exogenous, predetermined, or endogenous.
+Variables used to form instruments then appear in {cmd:gmmstyle()} or {cmd:ivstyle()} options after the comma.
+The result is a loss of parsimony, but fuller control over the instrument matrix.
+Variables can be used as the basis for "GMM-style" instrument sets without being included as regressors, or vice versa.{p_end}
+
+{p 4 4 2}The {cmdab:gmm:style()} and {cmdab:iv:style()} options also have suboptions that allow further customization of the instrument matrix.
+{p_end}
+
+
+{title:Citation}
+{p 4 8 2}{cmd:xtabond2} is not an official Stata command.
+It is a free contribution to the research community.
+Please cite it as such: {p_end}
+{p 8 8 2}Roodman, D. 2009. How to do xtabond2: An introduction to difference and system GMM in Stata. {it:Stata Journal} 9(1): 86-136.{p_end}
+
+
+{title:Options}
+
+{p 4 8 2}{cmd:level(}{it:#}{cmd:)} specifies the confidence level, in percent,
+for confidence intervals of the coefficients; see help {help level}. The default is 95.
+
+{p 4 8 2}{cmdab:svm:at} tells {cmd:xtabond2} to save the X, Y, Z, H, cluster ID, and weight matrices as e() return macros. It will also include a 3-column "ideqt" matrix
+that lists the panel identifier value, equation (0=transformed equation, 1=levels equation), and time period for the corresponding rows of the X, Y, Z, and weight matrices. (The equation column is 0 for the 
+differenced/transformed equation, 1 for the levels equation.) These matrices are not included by default 
+because they can be larger than the data set itself. If the {cmd:pca} option is used, {cmdab:sv:mat} will also save the 
+eigenvectors matrix as xtabond2_eigenvectors. This option is available only when using the Mata implementation in Mata's speed-favoring mode.
+Data are stored in balanced matrices and sorted by individual, equation (for System GMM), then time. The ideqt matrix indicates this ordering and the rows and 
+columns of other matrices are labelled for clarity. For compatibility with Stata column-labeling conventions,
+instruments subject to the backward orthogonal deviations transform (see below) are still denoted with a "D." operator.
+
+{p 4 8 2}{cmdab:svv:ar} tells {cmd:xtabond2} to save the X, Y, and Z matrices, along with equation-specific sample markers, as Stata variables. This option is available only when using using the Mata implementation in 
+Mata's speed-favoring mode. After System GMM, this option stores for both equations, in separate sets of 
+variables. Data are stored in new variables with prefixes such as "xlev", "ylev", and
+"zorthog". The sample markers are called "samplediff", "sampleorthog", and/or "samplelev." If variables with the 
+designated names already exist, the option will fail with an error message. After estimation,
+the difference equation, for example, can be approximated by {cmd:ivreg ydiff1 (xdiff* = zdiff*) if samplediff, nocons}. The match should be even better if the {cmd:xtabond2} estimate
+is performed with the {cmd:h(1)} option. Similarly, after System GMM, the levels equation can be estimated as {cmd:ivreg ylev1 (xlev* = zlev*) if samplelev, nocons}.
+
+{p 4 8 2}{cmd:twostep} specifies that the two-step estimator is to be
+calculated instead of the one-step.
+
+{p 4 8 2}{cmd:robust}: For one-step estimation, {cmd:robust} specifies that the robust estimator of the covariance matrix of the parameter estimates be calculated.
+The resulting standard error estimates are consistent in the presence of any pattern of heteroskedasticity and autocorrelation within panels.
+In two-step estimation, the standard covariance matrix is already robust in theory--but typically yields standard errors that are downward biased.
+{cmd:twostep robust} requests Windmeijer’s finite-sample correction for the two-step covariance matrix.
+
+{p 4 8 2}{cmd:cluster(}{it:varlist}{cmd:)} overrides the default use of the panel identifier (as set by {cmd:tsset}) for
+defining clusters. It also allows multiway clustering. {cmd:cluster(}{it:varlist}{cmd:)} implies {cmd:robust} in the senses 
+just described. For example, in two-step estimation,
+it requests the Windmeijer correction. Changing the clustering with this option affects one-step "robust" standard errors, all
+two-step results, the Hansen and difference-in-Hansen tests, and the Arellano-Bond serial correlation tests. When multiway clustering is combined with {cmd:small}, 
+the finite-sample correction multiplier is a component-specific (G/(G-1)*(N-1)/(N-k), as described in Cameron, Gelbach, and Miller (2006), pp. 8-9.
+
+{p 4 8 2}{cmd:noconstant} suppresses the constant term in the levels equation.
+By default, the term is included as a regressor and IV-style instrument.
+Unlike {help xtabond} and DPD (the original implementation of these estimators), {cmd:xtabond2} does not include the constant term in the transformed equation in difference GMM.
+Rather, the constant is transformed out.{p_end}
+
+{p 4 8 2}{cmd:small} requests {it:t} statistics instead of {it:z} statistics and an {it:F} test instead of a Wald chi-squared test of overall model fit.
+
+{p 4 8 2}{cmd:noleveleq} specifies that level equation should be excluded from the estimation, yielding difference rather than system GMM.
+
+{p 4 8 2}{cmd:nodiffsargan} prevents difference-in-Sargan/Hansen tests, which are are computationally intensive since they involve re-estimating the model for each test.
+The option has no effect on the ado version of {cmd:xtabond2}, which does not perform difference-in-Sargan/Hansen testing anyway.{p_end}
+
+{p 4 8 2}{cmd:nomata} prevents the use of Mata code even when the language is available (in Stata 10.0 or later). It is not necessary in Stata 7-9. Ordinarily this switch does not affect results.
+However, if some variables are collinear or nearly so, the two versions of the program may dropped different ones, which can affect the results.
+They can even differ in how many they drop, since the versions use different routines and tolerances for determining collinearity.
+In addition, the Mata version does not perfectly handle strange and unusual expressions like {cmd:gmm(L.x, lag(-1 -1))}. (Documentation for the {cmd: gmmstyle()} option is below.)
+This expression is the same as {cmd:gmm(x, lag(0 0))} in principle.
+But the Mata code would interpret it by lagging x, thus losing the observations of x for {it:t=T}, then unlagging the remaining information.
+The slow, ado version would not lose data in this way.{p_end}
+
+{p 4 8 2}{cmd:orthogonal} requests the forward orthogonal deviations transform instead of differencing.
+
+{p 4 8 2}{cmd:ivstyle()} specifies a set of variables to serve as standard instruments, with one column in the instrument matrix per variable.
+Normally, strictly exogenous regressors are included in {cmd:ivstyle} options, in order to enter the instrument matrix, as well as being listed before the main comma of the command line.
+The {cmd:equation()} suboption specifies which equation(s) should use the instruments: first-difference only ({cmd:equation(diff)}),
+levels only ({cmd:equation(level)}), or both ({cmd:equation(both)}), the default.
+Also by default, the instruments are transformed (into differences or orthogonal deviations) for use in the transformed equation and entered untransformed for the levels equation. 
+The suboption {cmd:passthru} may be used after {cmd:equation(diff)}, or when the option {cmd:noleveleq} is invoked, to prevent this transformation.
+{cmd:equation()} is useful for proper handling of predetermined variables used as IV-style instruments in system GMM.
+For example, if x is predetermined, it is a valid instrument for the levels equation since it is assumed to be uncorrelated with the contemporaneous error term.
+However, x becomes endogenous in first differences, so D.x is not a valid instrument for the transformed equation.
+{cmd:ivstyle(x)} would therefore be inappropriate.
+The use of x as an IV-style instrument in levels only could be specified by {bind:{cmd:iv(x, eq(level))}}.{p_end}
+
+{p 8 8 2}If the suboption {cmd:mz} is included in an {cmd:ivstyle} option, missing values in the instruments are converted to zeroes.
+{cmd:mz} does not change the precise moment conditions generated by {cmd:ivstyle}--they still apply only to the error terms of observations which have data for the instruments.
+Rather, {cmdab:mz} allows observations that are missing data for the instruments in question to nonetheless stay in the regression {it: if} the instruments are not also regressors.
+(Observations missing values for regressors must still be dropped.)
+{p_end}
+
+{p 4 8 2}{cmdab:gmm:style()} specifies a set of variables to be used as bases for "GMM-style" instrument sets described in Holtz-Eakin, Newey, and Rosen (1988) and Arellano and Bond (1991).
+By default {cmd:xtabond2} uses, for each time period, all available lags of the specified variables in levels dated t-1 or earlier as instruments for the transformed equation;
+and uses the contemporaneous first differences as instruments in the levels equation. These defaults are appropriate for predetermined variables that are not strictly exogenous (Bond 2000).
+Missing values are always replaced by zeros.
+The optional {cmd:laglimits(}{it:a b}{cmd:)} suboption can override these defaults: for the transformed equation, lagged levels dated t-{it:a} to t-{it:b} are used as instruments,
+while for the levels equation, the first-difference dated t-{it:a}+1 is normally used.
+{it:a} and {it:b} can each be missing ("."); {it:a} defaults to 1 and {it:b} to infinity.
+They can even be negative, implying "forward" lags.
+If {it:a}>{it:b} then {cmd:xtabond2} swaps their values.
+(Note that if {it:a}<={it:b}<0 then the first-difference dated t-{it:b}+1 is normally used as an instrument in the levels equation instead of that dated t-{it:a}+1,
+because it is more frequently in the range [1,T] of valid time indexes.
+Or, for the same reasons, if {bind: {it:a}<=0<={it:b}} or {bind: {it:b}<=0<={it:a}}, the first-difference dated t is used.)
+Since the {cmd:gmmstyle()} {it:varlist} allows time-series operators, there are many routes to the same specification.
+E.g., {bind:{cmd:gmm(w, lag(2 .))}}, the standard treatment for an endogenous variable, is equivalent to {bind:{cmd:gmm(L.w, lag(1 .))}}, thus {bind:{cmd:gmm(L.w)}}.{p_end}
+
+{p 8 8 2}The {cmdab:e:quation()} suboption of {cmd:gmmstyle()} works much like that of {cmd:ivstyle()} (see above), with one important exception.
+In response to {cmd:equation(level)}, {cmd:xtabond2} generates the {it: full set} of available instruments for the levels equation
+since it is no longer the case that most are made mathematically redundant by the presence of the full set of moment conditions for the transformed equation.
+To be precise, if the lag limits are {it:a} and {it:b}, then lags of the specified variables in differences dated t-{it:b} to t-{it:a} are used.
+{cmd:equation(diff)} has no effect in difference GMM.{p_end}
+
+{p 8 8 2}The {cmdab:p:assthru} suboption of {cmd:gmmstyle()} is meaningful only in system GMM, and only for variables for which {cmd:equation(level)} has also been specified.
+It directs {cmd:xtabond2} to create instruments for the levels equation that use not the first-differences of the specified variables but the original levels of the same dates.
+For example, {cmd:equation(level) passthru laglimits(1 .)} requests that all lagged levels be used as instruments.
+Under the standard assumptions, these instruments are not valid.{p_end}
+
+{p 8 8 2}The {cmdab:o:rthogonal} suboption tells {cmd:xtabond2} to apply the backward orthogonal deviations transform to the instruments for the 
+transformed equation. Essentially, instruments are replaced with their deviations from past means. Since the resulting instruments depend on all past 
+values of the underlying variables, the regressors in the transformed equation should 
+not be similarly transformed. Otherwise the instruments may be correlated with the error. That is, if this suboption is used the {cmdab:or:thogonal} {it:option} should also be included (outside a {cmd:gmmstyle()} option). In simulations, Hayakawa (2009)
+finds that "Difference GMM" with this combination--backword orthogonal deviations for the insturments and forward for the regressors--is less biased and more
+stable than traditional Difference GMM for a standard AR(1) model when {it:T}>=10. (For an AR(p) model, he uses only the most recent p instrument lags, 
+equivalent to {cmd:gmm(L.y, orthog lag(1 }{it:p}{cmd:))}.) This option does not affec the instruments for the levels equation.
+
+{p 8 8 2}The {cmdab:sp:lit} suboption of {cmd:gmmstyle()} is also meaningful only in system GMM, and then only when neither {cmd:eq(diff)} nor {cmd:eq(level)} is specified.
+Its sole effect is to split the specified instrument group in two for purposes of difference-in-Sargan/Hansen testing--one instrument set for the
+transformed equation and one for the levels equation.{p_end}
+
+{p 8 8 2}The {cmdab:c:ollapse} suboption of {cmd:gmmstyle()} specifies that {cmd:xtabond2} should create one instrument for each variable and lag distance, rather than one for each time period, variable, and lag distance.
+In large samples, {cmd:collapse} reduces statistical efficiency.
+But in small samples it can avoid the bias that arises as the number of instruments climbs toward the number of observations.
+(When instruments are many, they tend to overfit the instrumented variables and bias the results toward those of OLS/GLS.)
+{cmd:collapse} also greatly curtails computational demands by reducing the width of the instrument matrix, and (relevant for the ado version of the program) helps keep the matrix within Stata's size limit.{p_end}
+
+{p 8 8 2}For example, if a model assumes that {bind:E[w_is*D.e_it] = 0} for all s<t, this is expressed in standard Arellano-Bond estimation as:{p_end}
+
+{p 12 12 2}sum_i (w_is * D.e_it) = 0 for each s and t, s<t.{p_end}
+
+{p 8 8 2}This translates into columns in the instrument matrix of the form:{p_end}
+
+{p 12 12 2}w_i1{space 2}0{space 4}0{space 4}0{space 4}0{space 4}0{space 3}...{p_end}
+{p 12 12 1}{space 1}0{space 3}w_i1 w_i2{space 2}0{space 4}0{space 4}0{space 3}...{p_end}
+{p 12 12 1}{space 1}0{space 4}0{space 4}0{space 3}w_i1 w_i2 w_i3 ...{p_end}
+{p 12 12 1}{space 1}.{space 4}.{space 4}.{space 4}.{space 4}.{space 4}.{space 3}...{p_end}
+{p 12 12 1}{space 1}.{space 4}.{space 4}.{space 4}.{space 4}.{space 4}.{space 3}...{p_end}
+
+{p 8 8 2}{cmd:collapse} divides the "GMM-style" moment conditions into groups and sums the conditions in each group to form a smaller set of conditions of the form:
+
+{p 12 12 2}sum_i,t (w_i,t-j * D.e_it)= 0 for each j>0.{p_end}
+
+{p 8 8 2}This is equivalent to combining columns of the instrument matrix by addition, yielding:{p_end}
+
+{p 12 12 2}w_i1{space 2}0{space 4}0{space 3}...{p_end}
+{p 12 12 1}w_i2 w_i1{space 2}0{space 3}...{p_end}
+{p 12 12 1}w_i3 w_i2 w_i1 ...{p_end}
+{p 12 12 1}{space 1}.{space 4}.{space 4}.{space 3}...{p_end}
+{p 12 12 1}{space 1}.{space 4}.{space 4}.{space 3}...{p_end}
+
+{p 8 8 2}Similarly, the standard instruments for the levels equation (in system GMM) collapse from:{p_end}
+
+{p 12 12 2}D.w_i2{space 4}0{space 6}0{space 3}...{p_end}
+{p 12 12 2}{space 3}0{space 3}D.w_i3{space 4}0{space 3}...{p_end}
+{p 12 12 2}{space 3}0{space 6}0{space 3}D.w_i4 ...{p_end}
+{p 12 12 2}{space 3}.{space 6}.{space 6}.{space 3}...{p_end}
+
+{p 8 8 2}To the single column:{p_end}
+
+{p 12 12 2}D.w_i2{p_end}
+{p 12 12 2}D.w_i3{p_end}
+{p 12 12 2}D.w_i4{p_end}
+{p 12 12 2}{space 3}.{space 2}{p_end}
+{p 12 12 2}{space 3}.{space 2}{p_end}
+
+{p 4 8 2}{cmd:pca} tells {cmd:xtabond2} to replace the "GMM-style" instruments with their principal components in order to 
+reduce the instrument count in a minimally arbitrary way (Kapetanios and Marcellino 2010; Bai and Ng 2010; Mehrhoff 
+2009). Principal components analysis is run on the correlation, not covariance, matrix of the "GMM-style" instruments. By default 
+{cmd:xtabond2} will select all components with eigenvalues at least 1, and will select more
+if necessary to guarantee that instruments are at least as numerous as regressors, favoring those with largest eigenvalues.{p_end}
+
+{p 4 8 2}{cmdab:comp:onents:(}{it:#}{cmd:)} allows the user to override the default number of components described just above.{p_end}
+
+{p 4 8 2}{cmd:artests(}{it:#}{cmd:)} specifies the maximum order of the
+autocorrelation tests to be reported. The default is 2.{p_end}
+
+{p 4 8 2}{cmd:arlevels} specifies that the autocorrelation tests should be applied to the residuals from the levels, not first-difference, equation.
+It cannot be specified along with {cmd:noleveleq}.
+If there are fixed effects, then autocorrelation in levels is expected and would not call the specification into the question. {p_end}
+
+{p 4 8 2}{cmd:h(}{it:#}{cmd:)} controls the form of H, the {it:a priori} estimate of the covariance matrix of the idiosyncratic errors.
+In one-step linear GMM, the inverse of Z'HZ, where Z is the instrument matrix, proxies for the covariance matrix of the moments, and is used to weight the sample moments whose magnitudes are jointly minimized.
+Since H merely controls the weights on instruments believed exogenous, for any non-degenerate choice of H, one-step estimates will be consistent. And two-step estimates will be asymptotically efficient (Baum, Schaffer, and Stillman 2003).
+So the priority in designing H is minimizing arbitrariness.
+H always has block diagonal form, with all blocks the same. Let * indicate variables transformed by orthogonal deviations or differencing and M be the {bind:(T-1)xT} matrix that performs the chosen transform.
+We assume for the purposes of designing H that var[e]=I, the identity matrix.
+Then, for difference GMM, the {bind:(T-1)x(T-1)} blocks of H by default are MM', which is var[u*] {bind:(= var[e*])} when var[e]=I (see Roodman 2009). For orthogonal deviations, MM'=I.
+For differencing, it is:{p_end}
+
+{p 12 12 2}{space 1}2 -1{space 2}0 ...{p_end}
+{p 12 12 2}-1{space 2}2 -1 ...{p_end}
+{p 12 12 2}{space 1}0 -1{space 2}2 ...{p_end}
+{p 12 12 2}{space 1}.{space 2}.{space 2}. ...{p_end}
+
+{p 8 8 2}To perform system GMM, {cmd:xtabond2} treats the transformed data as being for periods 2 to T and levels data as being for periods T+1 to 2T. 
+The blocks of H are then {bind:(2T-1)x(2T-1)} {it:a priori} estimates of the covariance of the compound vector {bind:[u*' u']'}. If we assume, in addition to var[e]=I, that var[v]=0 (no fixed effects), then the blocks of H are
+
+{p 12 12 2}MM'{space 3}M'{p_end}
+{p 12 12 2}{space 1}M{space 4}I{p_end}
+
+{p 8 8 2} However, more than one choice for H is present in the literature.
+In {cmd:xtabond2}, {cmd:h(3)}, the default, specifies the matrices described above. {cmd:h(2)} differs in that for system GMM the upper right and lower left quadrants of the depicted H are zeroed out.
+This copies current versions of DPD for Gauss and Ox (Arellano and Bond 1998; Doornik, Arellano, and Bond 2002). {cmd:h(1)} specifies that H=I for both difference and system GMM.
+H took this value in the original implementation of the system GMM estimator, in Blundell and Bond (1998).
+In one-step GMM, setting H=I essentially gives 2SLS.{p_end}
+
+{p 4 8 2}{cmdab:vers:ion} causes {cmd:xtabond2} to clear existing estimation results, display {cmd:xtabond2}'s current version number, and leave it in the macro e(version). The option cannot be used with any other
+    options. (The e(version) macro is also returned under normal {cmd:xtabond2} usage.)
+
+
+
+{p 4 8 2}The Mata system parameter {stata "help mata_set":matafavor} influences the behavior of the Mata version of {cmd:xtabond2}.
+Type {cmd:mata: mata set matafavor speed} or {cmd:mata: mata set matafavor space} before running {cmd:xtabond2} to influence the tradeoff it makes between speed and memory use.
+Add the {cmd:, perm} option to these commands to make the change permanent. {bf: Note:}
+Increasing the amount of memory available for Stata data sets using the {cmd:set memory} command {it:reduces} that available to Mata.
+So if Mata {cmd:xtabond2} is running out of memory, usually indicated by an {err:unable to allocate real} message, also try reducing Stata memory with {cmd:set memory}.{p_end}
+
+{title:Options for {help predict}}
+
+{p 4 8 2}{cmd:xb}, the default, calculates the linear prediction.
+
+{p 4 8 2}{cmdab:re:siduals} calculates the residual error of the dependent
+variable from the linear prediction.
+
+{p 4 8 2} {cmdab:diff:erence} requests that the first-differences of the dependent variable, rather than the levels, be predicted.{p_end}
+
+
+
+{title:Return values}
+
+{col 4}Scalars
+{col 8}{cmd:e(N)}{col 27}Number of complete observations in untransformed data (system GMM) or transformed data (difference GMM)
+{col 8}{cmd:e(sargan)}{col 27}Sargan statistic 
+{col 8}{cmd:e(sar_df)}{col 27}Degrees of freedom for Sargan statistic
+{col 8}{cmd:e(sarganp)}{col 27}p value of Sargan statistic
+{col 8}{cmd:e(hansen)}{col 27}Hansen J statistic 
+{col 8}{cmd:e(hansen_df)}{col 27}Degrees of freedom for Hansen statistic
+{col 8}{cmd:e(hansenp)}{col 27}p value of Hansen statistic
+{col 8}{cmd:e(artests)}{col 27}Number of AR tests requested
+{col 8}{cmd:e(ar}{it:i}{cmd:)}{col 27}AR({it:i}) test statistic 
+{col 8}{cmd:e(ar}{it:i}{cmd:p)}{col 27}p value of AR({it:i}) statistic
+{col 8}{cmd:e(df_m)}{col 27}Model degrees of freedom
+{col 8}{cmd:e(df_r)}{col 27}Residual degrees of freedom (if {cmd:small} specified)
+{col 8}{cmd:e(chi2)}{col 27}Wald chi-squared statistic (if {cmd:small} not specified)
+{col 8}{cmd:e(chi2p)}{col 27}p value of Wald statistic (if {cmd:small} not specified)
+{col 8}{cmd:e(sig2)} {col 27}Estimated variance of the e_it
+{col 8}{cmd:e(sigma)} {col 27}Square root thereof
+{col 8}{cmd:e(F)}{col 27}F statistic (if {cmd:small} specified)
+{col 8}{cmd:e(F_p)}{col 27}p value of F statistic (if {cmd:small} specified)
+{col 8}{cmd:e(g_min)}{col 27}Lowest number of observations in an included individual
+{col 8}{cmd:e(g_max)}{col 27}Highest number of observations in an included individual
+{col 8}{cmd:e(g_avg)}{col 27}Average number of observations per included individual
+{col 8}{cmd:e(h)}{col 27}Value of {cmd:h()} option (default is 3)
+{col 8}{cmd:e(j)}{col 27}Number of instruments
+{col 8}{cmd:e(j0)}{col 27}Number of instruments, including collinear ones
+{col 8}{cmd:e(N_g)}{col 27}Number of included individuals
+{col 8}{cmd:e(N_clust}{it:i}{cmd:)}{col 27}Number of clusters in clustering group {it:i}
+{col 8}{cmd:e(components)}{col 27}Number of components extracted if pca option invoked
+{col 8}{cmd:e(kmo)}{col 27}Kaiser-Meyer-Olkin measure of sampling adequacy if pca option invoked
+{col 8}{cmd:e(pcaR2)}{col 27}Sum of eigenvalues of included components divided by sum of all
+
+{col 4}Macros
+{col 8}{cmd:e(predict)}{col 27}"xtab2_p"
+{col 8}{cmd:e(artype)}{col 27}"first differences" or "levels"
+{col 8}{cmd:e(vcetype)}{col 27}"Robust" for one-step {cmd:robust}, "Corrected" for {cmd:twostep robust}, empty otherwise
+{col 8}{cmd:e(twostep)}{col 27}"twostep" for {cmd:twostep}
+{col 8}{cmd:e(small)}{col 27}"small" for {cmd:small}
+{col 8}{cmd:e(esttype)}{col 27}"system" or "difference"
+{col 8}{cmd:e(pca)}{col 27}"pca" if pca option invoked
+{col 8}{cmd:e(gmminsts}{it:i}{cmd:)}{col 27}Variables listed in {cmd:gmmstyle} group {it:i}
+{col 8}{cmd:e(ivinsts}{it:i}{cmd:)}{col 27}Variables listed in {cmd:ivstyle} group {it:i}
+{col 8}{cmd:e(transform)}{col 27}"first differences" or "orthogonal deviations" 
+{col 8}{cmd:e(depvar)}{col 27}Dependent variable
+{col 8}{cmd:e(clustvar)}{col 27}Clustering group identifier(s)
+{col 8}{cmd:e(tvar)}{col 27}Time variable
+{col 8}{cmd:e(ivar)}{col 27}Individual (panel) variable
+{col 8}{cmd:e(cmd)}{col 27}"xtabond2"
+{col 8}{cmd:e(cmdline)}{col 27}Full command line
+{col 8}{cmd:e(version)}{col 27}Number of the version of {cmd:xtabond2} that produced these results.
+{col 8}{cmd:e(diffgroup}{it:i}{cmd:)}{col 27}variables in {it:i}th group subject to difference-Sargan/Hansen testing
+
+{col 4}Matrices
+{col 8}{cmd:e(b)}{col 27}Coefficient vector
+{col 8}{cmd:e(V)}{col 27}Variance-covariance matrix
+{col 8}{cmd:e(A1)}{col 27}First-step GMM weighting matrix
+{col 8}{cmd:e(A2)}{col 27}Second-step GMM weighting matrix (if {cmd:twostep} specified)
+{col 8}{cmd:e(Ze)}{col 27}Z'E where E=2nd-step residuals, used in computing Hansen statistic
+{col 8}{cmd:e(eigenvalues)}{col 27}Eigenvalues of principal components of GMM-style instruments (if {cmd:pca} specified)
+{col 8}{cmd:e(diffsargan)}{col 27}Table of difference-in-Sargan/Hansen tests
+{col 8}{cmd:e(ivequation)}{col 27}Value of equation() suboption for each ivstyle() option, in order
+{col 30}(0=level, 1=diff, 2=both)
+{col 8}{cmd:e(ivpassthru)}{col 27}Value of passthru option for each ivstyle() option.
+{col 8}{cmd:e(ivmz)}{col 27}Value of mz suboption for each ivstyle() option
+{col 8}{cmd:e(gmmequation)}{col 27}Value of equation() suboption for each gmmstyle() option
+{col 30}(0=level, 1=diff, 2=both)
+{col 8}{cmd:e(gmmpassthru)}{col 27}Value of passthru option for each gmmstyle() option
+{col 8}{cmd:e(gmmpasscollapse)}{col 27}Value of collapse option for each gmmstyle() option
+{col 8}{cmd:e(gmmlaglimits)}{col 27}Lag limits for each gmmstyle() option
+{col 8}{cmd:e(gmmorthogonal)}{col 27}Value of orthogonal option for each gmmstyle() option
+{col 8}{cmd:e(X)}{col 27}Matrix of right-side variables used in estimation, if {cmdab:sv:mat} invoked
+{col 8}{cmd:e(Y)}{col 27}Column of dependent variable used in estimation, if {cmdab:sv:mat} invoked
+{col 8}{cmd:e(Z)}{col 27}Instrument matrix used in estimation, if {cmdab:sv:mat} invoked
+{col 8}{cmd:e(H)}{col 27}H matrix used in estimation, if {cmdab:sv:mat} invoked
+{col 8}{cmd:e(wt)}{col 27}Weight vector used in estimation, if {cmdab:sv:mat} invoked and weights used
+{col 8}{cmd:e(eigenvectors)}{col 27}Principal component scores, if {cmdab:sv:mat} and {cmd:pca} invoked
+
+{col 4}Functions
+{col 8}{cmd:e(sample)}{col 27}Marks estimation sample
+
+{title:Examples}
+
+{p 4 8 2}{stata "use http://www.stata-press.com/data/r7/abdata.dta"}{p_end}
+{p 4 8 2}{stata "xtabond2 n l.n l(0/1).(w k) yr1980-yr1984, gmm(l.n w k) iv(yr1980-yr1984, passthru) noleveleq small"}{p_end}
+{p 4 8 2}{stata "xtabond2 n l.n l(0/1).(w k) yr1980-yr1984, gmm(l.n w k) iv(yr1980-yr1984, mz) robust twostep small h(2)"}{p_end}
+{p 4 8 2}{stata "xtabond2 n l(1/2).n l(0/1).w l(0/2).(k ys) yr1980-yr1984, gmm(l.n w k) iv(yr1980-yr1984) robust twostep small"}{p_end}
+{p 4 8 2}{cmd:* Next two are equivalent, assuming id is the panel identifier}{p_end}
+{p 4 8 2}{stata "ivreg2 n cap (w = k ys rec) [pw=_n], cluster(id year) orthog(rec)"}{p_end}
+{p 4 8 2}{stata "xtabond2 n w cap [pw=_n], iv(cap k ys, eq(level)) iv(rec, eq(level)) cluster(id year) h(1)"}{p_end}
+{p 4 8 2}{cmd:* Same for next two}{p_end}
+{p 4 8 2}{stata "regress n w k"}{p_end}
+{p 4 8 2}{stata "xtabond2 n w k, iv(w k, eq(level)) small h(1)"}{p_end}
+{p 4 8 2}{cmd:* And next two}{p_end}
+{p 4 8 2}{stata "xtabond n yr*, lags(1) pre(w, lags(1,.)) pre(k, endog) robust small noconstant"}{p_end}
+{p 4 8 2}{stata "xtabond2 n L.n w L.w k yr*, gmm(L.(w n k)) iv(yr*) noleveleq robust small"}{p_end}
+{p 4 8 2}{cmd:* And next two}{p_end}
+{p 4 8 2}{stata "xtdpd n L.n L(0/1).(w k) yr1978-yr1984, dgmm(w k n) lgmm(w k n) liv(yr1978-yr1984) vce(robust) two hascons"}{p_end}
+{p 4 8 2}{stata "xtabond2 n L.n L(0/1).(w k) yr1978-yr1984, gmm(L.(w k n)) iv(yr1978-yr1984, eq(level)) h(2) robust twostep"}{p_end}
+{p 4 8 2}{cmd:* Three ways to reduce the instrument count}{p_end}
+{p 4 8 2}{stata "xtabond2 n L.n L(0/1).(w k) yr1978-yr1984, gmm(L.(w k n)) iv(yr1978-yr1984, eq(level)) h(2) robust twostep pca"}{p_end}
+{p 4 8 2}{stata "xtabond2 n L.n L(0/1).(w k) yr1978-yr1984, gmm(L.(w k n), collapse) iv(yr1978-yr1984, eq(level)) h(2) robust twostep"}{p_end}
+{p 4 8 2}{stata "xtabond2 n L.n L(0/1).(w k) yr1978-yr1984, gmm(L.(w k n), lag(1 1)) iv(yr1978-yr1984, eq(level)) h(2) robust twostep"}{p_end}
+{p 4 8 2}{cmd:* Estimation a la Hayakawa 2009}{p_end}
+{p 4 8 2}{stata "xtabond2 n L.n L(0/1).(w k) yr1979-yr1984, gmm(L.(w k n), lag(1 1) orthog) iv(yr1979-yr1984) h(2) robust twostep orthog noleveleq"}{p_end}
+
+{p 4 4 2}{bf: Three sample files} are included with the package downloaded with this command. {cmd:abest.do} reproduces two sample file that comes with DPD for Ox, which in turn generate most of the GMM results in Arellano and Bond (1991).
+{cmd:bbest.do} reproduces another sample file that comes with DPD for Ox, based on Blundell and Bond (1998).
+To download them, type the following command or click on it: {stata "ssc install xtabond2, all replace": ssc install xtabond2, all replace}. This will save the files to your current directory, as set by the {cmd:cd} command.
+{cmd:greene.do} reproduces an example in Greene (2002).{p_end}
+ 
+{title:References}
+
+{p 4 8 2}Arellano, M. and S. Bond. 1991.
+Some tests of specification for panel data: Monte Carlo evidence and an
+application to employment equations. {it:The Review of Economic Studies} 58: 277-97.{p_end}
+{p 4 8 2}Arellano, M. and S. Bond. 1998.
+Dynamic Panel data estimation using DPD98 for Gauss: A guide for users.{p_end}
+{p 4 8 2}Arellano, M. and O. Bover. 1995.
+Another look at the instrumental variable estimation of error-components models. {it:Journal of Econometrics} 68: 29-51.{p_end}
+{p 4 8 2}Bai, J., and S. Ng. 2010. Instrumental Variables Estimation in a Data Rich Environment. 
+{it:Econometric Theory} 26(6): 1577-1606.{p_end}
+{p 4 8 2}Baum, C.F., M.E. Schaffer, and S. Stillman. 2003. Instrumental variables and GMM: Estimation and testing. {it:Stata Journal} 3: 1-31.{p_end}
+{p 4 8 2}Blundell, R., and S. Bond. 1998.
+Initial conditions and moment restrictions in dynamic panel data models. {it:Journal of Econometrics} 87: 115-43.{p_end}
+{p 4 8 2}Bond, S. 2002.
+Dynamic panel data models: A guide to micro data methods and practice. Working Paper 09/02. Institute for Fiscal Studies, London.{p_end}
+{p 4 8 2}Cameron, A.S., J.B. Gelbach, and D.L. Miller. 2006.
+Robust inference with multi-way clustering. NBER technical working paper 327. http://nber.org/papers/t0327.pdf{p_end}
+{p 4 8 2}Doornik, J.A., M. Arellano, and S. Bond. 2002.
+Panel data estimation using DPD for Ox. http://www.nuff.ox.ac.uk/Users/Doornik.{p_end}
+{p 4 8 2}Greene, W.H. 2002
+{it: Econometric Analysis}, 5th ed. Prentice-Hall.{p_end}
+{p 4 8 2}Hayakawa, K. 2009. A simple efficient instrumental variable estimator for panel AR(p) models when both N and T are large.
+{it:Econometric Theory} 25: 873-90.{p_end}
+{p 4 8 2}Holtz-Eakin, D., W. Newey, and H.S. Rosen. 1988.
+Estimating vector autoregressions with panel data. {it: Econometrica} 56: 1371-95.{p_end}
+{p 4 8 2}Kapetanios, G., M. Marcellino. 2010. Factor-GMM estimation with large sets of possibly weak instruments.
+{it:Computational Statistics & Data Analysis} 54(11): 2655–75.{p_end}
+{p 4 8 2}Mehrhoff, J. 2009. A solution to the problem of too many instruments in dynamic panel data GMM. 
+Discussion Paper Series 1. No 31/2009.{p_end}
+{p 4 8 2}Roodman, D. 2009. How to Do xtabond2: An Introduction to "Difference" and "System" GMM in Stata. {it:Stata Journal} 9(1): 86-136.{p_end}
+{p 4 8 2}Windmeijer, F. 2005.
+A finite sample correction for the variance of linear efficient two-step GMM estimators. {it: Journal of Econometrics} 126: 25-51.{p_end}
+
+{title:Author}
+
+{p 4}David Roodman{p_end}
+{p 4}{browse "http://davidroodman.com":davidroodman.com}{p_end}
+{p 4}david@davidroodman.com{p_end}
+
+{title:Also see}
+
+{p 4 12 2}
+Manual: {hi:[U] 23 Estimation and post-estimation commands},{break}
+{hi:[U] 29 Overview of Stata estimation commands},{break}
+{hi:[XT] xtabond}
+
+{p 4 13 2}
+Online: help for {help xtabond}, {help ivreg}, {help ivreg2}, {help estcom}, {help postest}; 
+{help xtgee}, {help xtintreg}, {help xtivreg}, {help xtreg}, {help xtregar}

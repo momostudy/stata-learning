@@ -1,0 +1,55 @@
+{smcl}
+{* 29Jul2006}{...}
+{hline}
+help for {hi:xtbalance}{right:version 2.01, {cmd:by Lian Yu-Jun}}
+{hline}
+
+{title:Trans the dataset into balance Panel Data}
+
+{p 8 15 2}
+{cmd:xtbalance}, 
+{cmdab:r:ange:(}{it:numlist}{cmd:)} 
+[ {cmdab:m:iss:(}{it:varlist}{cmd:)} ]
+
+{p 4 4 2}
+You must {cmd:tsset} your data before using {cmd:xtbalance}; see help {help tsset}.
+
+
+{title:Description}
+
+{p 4 4 2}
+{cmd:xtbalance} Trans the unbalanced Panel Data into balanced Panel Data 
+with sample range specified by option {cmd:range}.
+
+
+{title:Options}
+
+{p 4 8 2}
+{cmd:range(}{it:numlist}{cmd:)} specifies sample range to be transfored.
+{it:numlist} must be two integers and specified in ascending order. 
+
+{p 4 8 2}
+{cmd:miss(}{it:varlist}{cmd:)} forces to drop the observations if any one of the variable in 
+{it:varlist} has missing value.
+
+
+{title:Examples}
+
+{p 4 8 2}{cmd:. help xtbalance}{p_end}
+
+{p 4 8 2}{cmd:. xtbalance , range(1998 2005)}{p_end}
+
+{p 4 8 2}{cmd:. xtbalance , range(1998 2005) miss(invest market)}{p_end}
+
+{p 4 8 2}{cmd:. xtbalance , rang(1978 1982) miss(_all)}{p_end}
+
+
+{title:For problems and suggestions}
+
+
+{phang}
+{cmd:Author: Yujun,Lian (Arlion)} Department of Finance, Lingnan College, Sun Yat-Sen University.{break}
+E-mail: {browse "mailto:arlionn@163.com":arlionn@163.com}. {break}
+Blog: {browse "http://blog.cnfol.com/arlion":http://blog.cnfol.com/arlion}. {break}
+
+
