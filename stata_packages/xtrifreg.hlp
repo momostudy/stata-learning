@@ -1,0 +1,158 @@
+{smcl}
+{* *! version 1.0  Nicolai T. Borgen 12February2016}{...}
+{cmd:help xtrifreg}{right: ({browse "http://www.stata-journal.com/article.html?article=st0438":SJ16-2: st0438})}
+{hline}
+
+{title:Title}
+
+{p2colset 5 17 19 2}{...}
+{p2col :{hi:xtrifreg} {hline 2}}Unconditional quantile regression with fixed effects{p_end}
+{p2colreset}{...}
+
+
+{title:Syntax}
+
+{p 8 13 2}
+{cmd:xtrifreg} {depvar} {indepvars} {ifin}
+        [{it:{help xtrifreg##weights:weight}}]{cmd:, fe} 
+        {opth i(varname)}
+	[{it:{help xtrifreg##options:options}}]
+
+{marker options}{...}
+{synoptset 20 tabbed}{...}
+{synopthdr :options}
+{synoptline}
+{p2coldent :* {opt fe}}use a fixed-effects estimator (that is, {helpb xtreg}){p_end}
+{p2coldent :* {opth i(varname)}}specify the fixed-effects variable{p_end}
+{synopt :{opt q:uantile(#)}}specify the number of quantile; default is {cmd:quantile(50)}{p_end}
+{synopt :{opt ke:rnop(string)}}specify the kernel function
+    ({cmd:gaussian}, {cmd:epanechnikov}, {cmd:epan2}, {cmd:biweight},
+    {cmd:cosine}, {cmd:parzen}, {cmd:rectangle}, or {cmd:triangle});
+    default is {cmd:kernop(gaussian)}{p_end}
+{synopt :{opt w:idth(#)}}specify the halfwidth of the kernel; default is
+    {cmd:width(0.0)}, which calculates the "optimal value" (see {helpb rifreg}){p_end}
+{synopt :{opt nor:obust}}specify conventional standard errors; the default is cluster-robust standard errors{p_end}
+{synopt :{opt bo:otstrap}}specify bootstrapped standard errors{p_end}
+{synopt :{opt clusterbo:otstrap}}specify cluster-bootstrapped standard errors, with clustering on the fixed-effects variable specified in {opt i(varname)}{p_end}
+{synopt :{opt reps(#)}}specify the number of bootstrap replications; default
+     is {cmd:reps(50)}{p_end}
+{synoptline}
+{p2colreset}{...}
+{marker weights}{...}
+{pstd}
+{cmd:aweight}s, {cmd:fweight}s, and {cmd:iweight}s are allowed; see 
+{help weight}.
+
+
+{title:Description}
+
+{pstd}
+{cmd:xtrifreg} fits an unconditional quantile regression (UQR) model with 
+fixed effects.  It should be considered a supplement to the user-written 
+{helpb rifreg} command (Firpo, Fortin, and Lemieux 2009).
+
+{pstd}
+More specifically, {cmd:xtrifreg} 1) uses {helpb pctile} to determine the 
+value of the outcome variable at the specified quantile, 2) uses
+{helpb kdensity} to identify the density of Y at that quantile, 3) calculates
+the recentered influence function, and 4) includes this recentered
+influence function as {depvar} in {helpb xtreg}.
+
+{pstd}
+{cmd:xtrifreg} requires that one fixed-effects variable is specified in the 
+{opt i(varname)} option (any additional fixed-effects variables must be
+specified as dummy variables).  Regard the coefficients, using
+{cmd:xtrifreg} to include fixed effects is identical to including N-1
+fixed-effects dummy variables in {helpb rifreg}, but it is less
+computationally demanding.  {cmd:xtrifreg} is also useful when the number of
+fixed effects exceeds the number of allowed right-hand-side variables in
+Stata.
+
+{pstd}
+The default standard errors in {cmd:xtrifreg} are cluster-robust, which
+relaxes the assumptions that the error term is independent and identically
+distributed (see {manhelpi vce_option R}).  These standard errors are
+different from the default standard errors in {helpb rifreg}, which are
+robust.  With the {opt norobust} and {opt bootstrap} option, {cmd:xtrifreg}
+and {cmd:rifreg} produce identical standard errors.  With the
+{opt clusterbootstrap} option, {cmd:xtrifreg} reports cluster-bootstrapped
+standard errors.
+
+
+{title:Options}
+
+{phang}
+{opt fe} specifies that a fixed-effects estimator (that is, {helpb xtreg})
+should be used.  {opt fe} is required.
+
+{phang}
+{opth i(varname)} specifies the fixed-effects variable.  Only one fixed-effects
+variable can be included in {opt i(varname)}.  {opt i()} is required.
+
+{phang}
+{opt quantile(#)} specifies the quantile.  The 75th quantile, for
+instance, can be written as either {cmd:quantile(.75)} or
+{cmd:quantile(75)}.  The default is {cmd:quantile(50)}.
+
+{phang}
+{opt kernop(string)} specifies the kernel function, where {it:string}
+is {opt gaussian}, {opt epanechnikov}, {opt epan2}, {opt biweight},
+{opt cosine}, {opt parzen}, {opt rectangle}, or {opt triangle}.
+The default is {cmd:kernop(gaussian)}.
+
+{phang}
+{opt width(#)} specifies the halfwidth of the kernel.  The default is
+{cmd:width(0.0)}, which calculates the "optimal value" (see {helpb rifreg}).
+
+{phang}
+{opt norobust} specifies to include conventional standard errors.  The default
+is to include cluster-robust standard errors.
+
+{phang}
+{opt bootstrap} specifies to include bootstrapped standard errors.
+
+{phang}
+{opt clusterbootstrap} specifies to include cluster-bootstrapped standard
+errors, with clustering on the fixed-effects variable specified in
+{opth i(varname)}.
+
+{phang}
+{opt reps(#)} specifies the number of bootstrap replications.  The default
+is {cmd:reps(50)}.
+
+
+{title:Examples}
+
+{pstd}
+Setup{p_end}
+{phang2}{cmd:. webuse nlswork}
+
+{pstd}
+Report the effect of union membership on the 90th quantile with fixed effects
+on {cmd:idcode}{p_end}
+{phang2}{cmd:. xtrifreg ln_wage union, fe i(idcode) q(90)}
+
+{pstd}
+Same as above, but use bootstrapped standard errors with 200
+replications{p_end}
+{phang2}{cmd:. xtrifreg ln_wage union, fe i(idcode) q(90) bootstrap reps(200)}
+
+
+{title:Reference}
+
+{p 4 8 2}
+Firpo, S., N. M. Fortin, and T. Lemieux. 2009.
+Unconditional quantile regressions.
+{it:Econometrica} 77: 953-973.{p_end}
+
+
+{title:Author}
+
+{p 4 4 2} Nicolai T. Borgen, University of Oslo{break}
+n.t.borgen@sosgeo.uio.no{p_end}
+
+
+{title:Also see}
+
+{p 4 14 2}Article:  {it:Stata Journal}, volume 16, number 2: {browse "http://www.stata-journal.com/article.html?article=st0438":st0438}
+{p_end}
