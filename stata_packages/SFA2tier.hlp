@@ -1,0 +1,102 @@
+{smcl}
+{* 14sep2005}{...}
+{hline}
+help for {hi:SFA2tier}{right:version 1.0}
+{hline}
+
+{title:Estimate the two-tier stochastic frontier model (two-tier SFA)}
+
+{p 8 14 4}{cmd:SFA2tier} {it:depvar}
+[{cmd:if} {it:exp}] [{cmd:in} {it:range}]
+[{cmd:,} 
+{cmdab:sigmau:(}{it:varlist}{cmd:)}
+{cmdab:sigmaw:(}{it:varlist}{cmd:)}
+{cmdab:s:earch}
+{cmdab:c:heck}
+{cmdab:p:lot}
+{cmdab:r:obust}
+{cmdab:f:irmeff}
+{cmdab:t:imeff}
+{cmd: noconstant}
+]
+
+
+{title:Description}
+
+{p 4 4 2}
+{cmd:SFA2tier} estimate the two-tier stochastic frontier model developed in
+Kumbhakar and Christopher (2009). 
+Lian and Chung (2008) use this model to estimate the investment efficiency of 
+Chinese listed firms.
+
+{p 4 4 2}
+The model is specified as:
+y[i] = x[i]*b - u[i] + w[i] + e[i],
+
+{p 4 4 2}
+where, {it:y} and {it:x} are dependent and independent variables respectively. 
+The disturbance includes three terms, {it:u}, {it:w}, and {it:e}. 
+The {it:u} term and {it:w} term are one-sided distributed, which can be 
+described by the exponential distribution, i.e., {it:u}~Exp(u) and {it: u}~Exp(w).
+{it:u} and {it:w} are specified to capture the departure to the frontier of {it:y}, 
+which is estimated by {it:x*b}. {it:e} is the traditional disturbance term, 
+assumed to be normal distributed, i.e., {it:e}~N(0,sigma_e^2).
+
+{p 4 4 2}
+The parameter of {it:u} and {it:w} can be heterogeneous by specify a varlist in option 
+sigmau() and sigmaw(). See Wang(2003) and 连玉君和苏治(2009) for one-tier SFA model.
+    
+
+{title:Options}
+
+{p 4 8 2}
+{cmd:sigmau} and {cmd:sigmw} sepecify variables that model the heterogeneity of term {it:u} and {it:w}.
+Note that {it:u}~Exp(u), thus specify sigmau(z1 z2 z3) means that {it:u}~Exp(z1*b1 + z2*b2 + z3*b3).
+
+{p 4 8 2}
+{cmd:check, search plot} are MLE options, see {help ml}. 
+
+{p 4 8 2}
+{cmd:firmeff, timeeff} add the firm-effect dummies and time-effect dummies respectively.
+
+
+{title:Examples}
+
+{p 4 8 2}{cmd: SFA2tier invest tobin, sigmau(size cflow) sigmaw(topone manageshare)}{p_end}
+
+{p 4 8 2}{cmd: ml max}{p_end}
+
+{title:Author}
+
+{phang}
+{cmd:Yujun,Lian (Arlion)} Department of Finance, Lingnan College, Sun Yat-Sen University.{break}
+E-mail: {browse "mailto:arlionn@163.com":arlionn@163.com}. {break}
+Blog: {browse "http://blog.cnfol.com/arlion":http://blog.cnfol.com/arlion}. {break}
+Homepage: {browse "http://www.lingnan.net/intranet/teachinfo/dispuser.asp?name=lianyj":http://www.lingnan.net/intranet/teachinfo/dispuser.asp?name=lianyj}. {break}
+{p_end}
+
+
+
+{title:References}
+
+{p 4 8 2}Kumbhakar, S., F. Christopher, {it:The effects of bargaining on market outcomes:} 
+{it: Evidence from buyer and seller specific estimates}, 
+Journal of Productivity Analysis, 2009, 31(1): 1-14.{p_end}
+
+{p 4 8 2}Lian, Y., C.-F. Chung, {it:Are Chinese Listed Firms Over-Investing?}.{break}
+SSRN working paper, 2008, Available at SSRN:{browse "http://ssrn.com/abstract=1296462": http://ssrn.com/abstract=1296462}.{p_end}
+
+{p 4 8 2}Wang, H., {it:A Stochastic Frontier Analysis of Financing Constraints on Investment}.{break} 
+Journal of Business and Economic Statistics, 2003, 21(3): 406-419.
+
+{p 4 8 2}连玉君, 苏治, 融资约束、不确定性与上市公司投资效率, 管理评论, 2009(01): 19-26.
+
+
+
+{title:Also see}
+
+{p 4 13 2}
+Online:  help for
+{help frontier};
+{help xtfrontier}.
+
