@@ -1,0 +1,55 @@
+.-
+help for ^collin^
+.-
+
+Collinearity Diagnostics
+------------------------
+
+    ^collin^ varlist  [^if^ exp] [^in^ range] [, ^corr rinv^]
+
+
+
+Description
+-----------
+
+^collin^ computes several collinearity diagnostic measures including
+       VIF, tolerance, eigenvalues, condition index, and R-squared.  
+       It will compute the eigenvalues and condition index on either 
+       the raw SSCP with an intercept (default) or the deviation SSCP 
+       without an intercept.
+
+Option
+------
+
+^corr^   Eigenvalues and condition index computed from correlation matrix
+         without a constant. 
+        
+      By default the eigenvalues and condition index are computed on the
+      scaled raw score SSCP matrix with an intercept.
+        
+^rinv^  display inverse of correlation matrix.
+
+Examples
+--------
+
+ . ^collin read write math^
+ . ^collin read write math, raw rinv^
+ . ^collin read write math if gender==1^
+ 
+
+
+Author
+------
+
+      Philip B. Ender
+      UCLA Department of Education
+      UCLA, Academic Technology Services
+      ender@@ucla.edu 
+
+
+Also see
+--------
+
+ Manual:  ^[R] regression diagnostics^
+On-line:  help for @vif@
+
