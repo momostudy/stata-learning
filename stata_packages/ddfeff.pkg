@@ -1,0 +1,10 @@
+v 1.0
+d 'DDFEFF': Directional Distance Function for Efficiency/Productivity Analysis
+d 
+d Distribution-Date:   20191102
+d 
+F ddfeff.ado
+F ddfeff.sthlp
+F lddfeff.mlib
+F nddfeff.ado
+F nddfeff.sthlp
