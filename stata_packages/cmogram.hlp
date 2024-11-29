@@ -1,0 +1,236 @@
+{smcl}
+{* *! version 1.1.1  06sep2011}{...}
+{cmd:help cmogram}
+{hline}
+
+{title:Title}
+
+	{p 4 4 2}{hi:cmogram} {hline 2} Draw histogram-style conditional mean or median graph
+
+{title:Syntax}
+
+{p 8 17 2}
+{cmd:cmogram} {it:{help varname:yvar}} {it:{help varname:xvar}}
+[{it:{help if:if}}]
+[{cmd:,} {it:{help cmogram##options:options}} ]
+
+{synoptset 20 tabbed}{...}
+{synopthdr}
+{synoptline}
+{syntab:Main}
+{synopt:{opt tit:le(...)}}title of graph{p_end}
+{synopt:{opth con:trols(varlist)}}control variables for graphing residuals{p_end}
+{synopt:{opt cut:point(#)}}point along {it:x} axis to split the graph{p_end}
+{synopt:{opt cutr:ight}}include border observations on the right side{p_end}
+{synopt:{opt ci(#)}}plot means with confidence intervals of level {it:#}{p_end}
+{synopt:{opt med:ian}}plot medians rather than means{p_end}
+{synopt:{opt count}}plot counts (frequencies) rather than means{p_end}
+{synopt:{opt frac:tion}}plot fractions (proportions) rather than means{p_end}
+{synopt:{opt l:ineat(#)}}draw one or more vertical lines at points along {it:x} axis{p_end}
+{synopt:{opt sc:atter}}format as scatterplot rather than bar graph{p_end}
+{synopt:{opt leg:end}}allow legend to display{p_end}
+{synopt:{opt lf:it}}include line of best fit{p_end}
+{synopt:{opt lfitci}}include line of best fit, with confidence interval{p_end}
+{synopt:{opt qf:it}}include quadratic of best fit{p_end}
+{synopt:{opt qfitci}}include quadratic of best fit, with confidence interval{p_end}
+{synopt:{opt low:ess}}include local linear smooth plot{p_end}
+{synopt:{opth by(varname)}}graph subgroups according to {it:varname}{p_end}
+{synopt:{opt byt:itle(...)}}overall title for {it:by()} graphs{p_end}
+{synopt:{opt byv:alues(...)}}optional ordered list of categories for {it:by()} graphs{p_end}
+{synopt:{opt note:n}}note # observations at bottom of graph{p_end}
+{synopt:{opt notepfx(...)}}prefix for note at bottom of graph{p_end}
+{synopt:{opt notesfx(...)}}suffix for note at bottom of graph{p_end}
+{synopt:{opt non:otes}}suppress all notes at bottom of graph{p_end}
+{synopt:{opt h:istopts(options)}}control bin definition with {help histogram##continuous_opts:histogram options}{p_end}
+{synopt:{opt g:raphopts(options)}}control graph output with {help twoway_options:graph options}{p_end}
+{synopt:{opt lfito:pts(options)}}control line or quadratic of best fit options{p_end}
+{synopt:{opt lowo:pts(options)}}control lowess plot options{p_end}
+{synopt:{opt cio:pts(options)}}control {it:ci} confidence intervals with {help ci:ci options}{p_end}
+{synopt:{opt rcapo:pts(options)}}control {it:ci} output with {help twoway_rcap:rcap options}{p_end}
+{synopt:{opt sav:ing(filename)}}save graph to file{p_end}
+{synopt:{opt gen:erate(prefix)}}save graph values in variables with given prefix; programmer's option{p_end}
+{synoptline}
+{p2colreset}{...}
+
+{title:Description}
+
+{pstd}
+{cmd:cmogram} graphs the means, medians, frequencies, or proportions of
+{it:yvar}, conditional on {it:xvar}. By default, bins are defined along the {it:x} axis
+as they are by {help histogram:histogram}. Alternatively, 
+{help histogram##continuous_opts:histogram options} can be used to override the default
+bin definitions, as in {opt histopts(bin(10))}. The exact bin definitions are always output 
+along with the graph(s).
+
+{pstd}
+While the default output style is similar to a histogram, the {opt scatter} option allows for
+scatterplot-style output. For regression 
+discontinuity and similar applications, {opt cutpoint(#)} can be used to split graphs at a 
+particular {it:x} value. To plot conditional means or medians of residuals, {opt controls(...)} 
+can be used; the plotted residuals will be after a regression of the form {it:regress yvar controls}.
+
+{pstd}
+{opt by} allows subgroups to be plotted separately. 
+
+{marker options}
+{title:Options}
+
+{dlgtab:Main}
+
+{phang}
+{opt title(...)} adds a title to the top of the graph.
+Specify the graph number as the {it:#} in {opt title#(...)} to specify a title for only
+one of several graphs output (e.g., using {opt by}).
+
+{phang}
+{opth controls(varlist)} considers residuals of {it:yvar} rather than the values of {it:yvar} directly.
+A regression of the form {it:regress yvar controls} is executed, then means or medians of the residuals are plotted accordingly.
+
+{phang}
+{opt cutpoint(#)} splits the graph at the specified point along the {it:x} axis. Bins are defined along the {it:x} axis to the right and left of this cutoff, with no bin spanning the cutoff.
+
+{phang}
+{opt cutright} includes border observations on the right side of a split graph. By default, border observations are included on the left.
+
+{phang}
+{opt ci(#)} plots means of {it:yvar} with confidence intervals of level {it:#}.
+
+{phang}
+{opt median} plots medians of {it:yvar} rather than means.
+
+{phang}
+{opt count} plots counts (frequencies) of {it:yvar} rather than means.
+
+{phang}
+{opt fraction} plots fractions (proportions) of {it:yvar} rather than means.
+
+{phang}
+{opt lineat(#)} draws a vertical line at the specified point along the {it:x} axis. To draw multiple lines, include multiple numbers separated by spaces.
+
+{phang}
+{opt scatter} formats output as a scatterplot rather than a bar graph. In this case, each conditional median or mean is plotted as a dot rather than a bar.
+
+{phang}
+{opt legend} allows display of the legend; by default it is suppressed. To more fully control display of the legend, include this option as well as {opt graphopts(legend(...))}.
+
+{phang}
+{opt lfit} plots a line of best fit on the graph. When the graph is split using {opt cutpoint}, separate lines of best fit are plotted on the left and right.
+
+{phang}
+{opt lfitci} is the same as {opt lfit}, but with confidence intervals.
+
+{phang}
+{opt qfit} is the same as {opt lfit}, but with a quadratic.
+
+{phang}
+{opt qfitci} is the same as {opt qfit}, but with confidence intervals.
+
+{phang}
+{opt lowess} plots local linear smooth ({help twoway_lowess:lowess}) plot on the graph. When the graph is split using {opt cutpoint}, separate lowess plots are plotted on the left and right.
+
+{phang}
+{opth by(varname)} graphs subgroups separately, according to {it:varname}. Subgroups are identified in the note field below each graph.
+
+{phang}
+{opt bytitle(...)} adds an overall title to a series of subgroup graphs, when {opt by} is used.
+
+{phang}
+{opt byvalues(...)} specifies an ordered list of category values, when {opt by} is used. So, e.g., {opt byvalues(1 0)} will place the {it:1} graph before the {it:0} graph. By default, graphs appear in sorted order.
+
+{phang}
+{opt noten} notes the number of observations at the bottom of the graph.
+
+{phang}
+{opt notepfx(...)} adds a prefix to the note at the bottom of the graph. This will precede the number of observations and/or the subgroup, depending on other options.
+
+{phang}
+{opt notesfx(...)} adds a suffix to the note at the bottom of the graph. This will follow the number of observations and/or the subgroup, depending on other options.
+
+{phang}
+{opt nonotes} suppresses all notes at the bottom of the graph, even when using {opt by}.
+
+{phang}
+{opt histopts(options)} controls the definition of bins with {help histogram##continuous_opts:histogram options}.
+When graphs are split by {opt cutpoint}, these options govern bin definitions for each side of the graph. So, e.g., {opt histopts(bin(10))} will
+define 10 bins to the left and 10 to the right.
+
+{phang}
+{opt graphopts(options)} specifies additional {help twoway_options:graph options} to govern graph output. These options can control any aspect of the
+look of the graph, including titles, labels, and styles. Specify the graph number as the {it:#} in {opt graphopts#(options)} to specify options for only
+one of several graphs output.
+
+{phang}
+{opt lfitopts(options)} specifies additional {help twoway_lfit:lfit options} to govern output of the line-of-best-fit when using {opt lfit}.
+When using {opt lfitci}, specifies additional {help twoway_lfitci:lfitci options}.
+When using {opt qfit}, specifies additional {help twoway_qfit:qfit options}.
+When using {opt qfitci}, specifies additional {help twoway_qfitci:qfitci options}.
+Specify the graph number as the {it:#} in {opt lfitopts#(options)} to specify options for only
+one of several graphs output.
+
+{phang}
+{opt lowopts(options)} specifies additional {help twoway_lowess:lowess options} to govern output of lowess plots when using {opt lowess}.
+Specify the graph number as the {it:#} in {opt lowopts#(options)} to specify options for only one of several graphs output.
+
+{phang}
+{opt ciopts(options)} specifies additional {help ci:ci options} to govern calculation of confidence intervals when using {opt ci}.
+
+{phang}
+{opt rcapopts(options)} specifies additional {help twoway_rcap:rcap options} to govern output of confidence intervals when using {opt ci}.
+Specify the graph number as the {it:#} in {opt rcapopts#(options)} to specify options for only
+one of several graphs output.
+
+{phang}
+{opt saving(filename)} exports the graph to {it:filename} and closes the graph window. This option is ideal for automating the output of graphs with .do files.
+
+{phang}
+{opt generate(prefix)} is a programmer's option to save graphing values, as in {help twoway__histogram_gen:twoway__histogram_gen}.
+Variables of the form {it:prefix}x#, where {it:#} is the graph number starting from 0, are saved with the center {it:x} value for each bin.
+Variables of the form {it:prefix}y# are saved with the corresponding heights.
+
+{title:Saved results}
+
+{pstd}
+{cmd:cmogram} saves the following in {cmd:r()}:
+
+{pstd}
+Scalars:
+
+	 {cmd:r(bw#)}    bin width for graph {it:#}
+
+{pstd}
+By default, there is only one graph output by {cmd:cmogram}, so {it:#} is 0; when {opt cutpoint} is specified, there are two graphs, 0 and 1, corresponding
+to the left and right sides of the graph; when {opt by} is specified, there are additional graphs. To save more details for each graph, use the 
+{opt generate} option.
+
+{title:Examples}
+
+{phang}{cmd:. sysuse auto}
+
+{phang}{cmd:. cmogram mpg weight}
+
+{phang}{cmd:. cmogram mpg weight, median title("Median MPG by Weight")}
+
+{phang}{cmd:. cmogram mpg weight, median title("Median MPG by Weight") saving("median mpg.png")}
+
+{phang}{cmd:. cmogram mpg weight, histopts(bin(10)) lfit scatter}
+
+{phang}{cmd:. cmogram mpg weight, histopts(bin(10)) lfit graphopts(note("Source: ..."))}
+
+{phang}{cmd:. cmogram mpg weight, histopts(bin(5)) lfit cutpoint(3250) lineat(3250)}
+
+{phang}{cmd:. cmogram mpg weight, histopts(bin(5)) lfit cutpoint(3250) lineat(3000 3250 3500) controls(price)}
+
+{phang}{cmd:. cmogram mpg weight, histopts(bin(5)) by(foreign) bytitle("Mean MPG by Type and Weight")}
+
+
+{title:Author}
+
+Christopher Robert, Harvard University, chris_robert@hksphd.harvard.edu
+
+
+{title:Also see}
+
+{psee}
+Online: help for
+ {helpb histogram}
+{p_end}
