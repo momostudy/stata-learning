@@ -1,0 +1,157 @@
+{smcl}
+{hline}
+help for {hi: selmlog}
+{hline}
+
+{title:Selection bias correction based on the multinomial logit model (version 1.3)}
+
+{p 8 15}
+{cmd:selmlog} {it:depvar varlist} [{cmd:if}{it:exp}] [{cmd:in}{it:range}],{cmdab:sel:ect}({it:depvar_m=varlist_m})
+[{cmd:lee} {cmd:dmf}({it:#}) {cmd:dhl}({it:#} [{it:all}]) {cmdab:show:mlogit} {cmd:wls}
+{cmdab:boot:strap}({it:number_of_replications} [{it:sample_size}]) {cmdab:mlop:tions}({it:mlogit options})
+{cmdab:gen}({it:variable generic name})]
+
+{title:Description}
+
+{p}
+{cmd:selmlog} estimates linear regression models on a selected subset of observations, where selectivity is modelled as a multinomial logit (as opposed, for instance, to univariate probit as in the Heckman model). Estimation is run by step (multinomial logit, then linear regression with selectivity correction).
+
+{p}
+It applies a set of methods reviewed in Bourguignon, Fournier and Gurgand (2004).
+
+{p}
+In the equation of interest, {it:depvar} is regressed on {it:varlist}.
+
+{p}
+In the selection equation, {it:depvar_m} is a variable that identifies the multiple choices and {it:varlist_m} the corresponding explanatory variables: refer to the {cmd:mlogit} command for this syntax. {it:depvar_m} should not take negative values.
+
+{p}
+The outcome variable {it:depvar} is observed for only one value of {it:depvar_m}. It is important that depvar should have missing values for any other value of {it:depvar_m}.
+
+{p}
+In the output, {cmd:selmlog} adds to varlist a series of variables labelled {it:_m[depvar_m value]}, except for the {cmd:dhl} option.
+
+{p}
+These variables are consistent estimators of conditional expected values of the residuals derived from the multinomial logit model. Their formula depends on the bias correction method chosen in the option command.
+
+{p}
+The coefficients on these variables are functions of the covariance between the residual in the regression and the residuals (or some function of the residuals) from the multinomal logit model.
+
+{p}
+With the {cmd:dhl} option, they are the coefficients on polynomials of the selection probabilities and have no structural interpretation (in particular, they do not correspond to well defined correlations).
+
+{p}
+With the {cmd:dhl} option the variables are labeled with four indexes: {it:_m[depvar_m value i][order][depvar_m value j][order]} for all combinaisons of {it:depvar_m} values i and j, with {it:order} the polynomial orders running from 0 to the user supplied maximum (when {it:order} is 0 for one of the probability, the {it:_m} variable is then {it:_m[depvar_m value i][order]}
+
+{p}
+Except for the {cmd:dhl} option, the implied standard error of the residual of the regression equation is also reported, as well as implied correlation coefficients (note that they are not restricted to [-1,1]).
+
+{title:Options}
+
+{p}
+{cmd:lee} performs the Lee (1983) correction method.
+
+{p}
+{cmd:dmf(0)} performs the Dubin-McFadden (1984) correction method.
+
+{p}
+{cmd:dmf(1)} performs the Dubin-McFadden (1984) correction method, waving the restriction (imposed in Dubin-McFadden (1984)) that all correlation coefficients sum-up to zero.
+
+{p}
+{cmd:dmf(2)} performs a variant of the Dubin-McFadden (1984) correction method suggested in Bourguignon, Fournier and Gurgand (2004).
+
+{p}
+{cmd:dhl} performs corrections based on Dahl (2002) using selection probabilities in polynomial form.
+
+{p}
+The {cmd:dhl} options include the order of the polynomials on the selection probabilities. With this number alone, the correction term includes only the probability to be selected on the observed outcome. If this number is followed by {cmd:all}, then all probabilities are included in polynomial form, with interactions, up to the specified order.
+
+{p}
+{cmd:showmlogit} reports the multinomial logit estimated in the first-step.
+
+{p}
+{cmd:wls} applies weighted least squares in the second step regression to account for heteroskedasticity present in the model due to selectivity.
+
+{p}
+This option can achieve (asymptotic) efficiency, but, in some instances, some of the estimated variances may be negative. Waiving this option then allows to estimate the model however. This option is not available with {cmd:dhl}.
+
+{p}
+{cmd:bootstrap} uses bootstrap to estimate the parameter standard errors. The user must specify the number of replications. The default {it:sample_size} is the size of the sample in use.
+
+{p}
+If this option is waived, the reported variances take no account of the two-step nature of the procedure and implied residual variance and correlations have no reported standard errors.
+
+{p}
+{cmdab:mlop:tions} contains the list of stata mlogit options that need to be executed during the first-stage estimation.
+
+{cmdab:gen} outputs the {it:_m} variables used in the estimation but with the provided {it:generic name} instead of {it:_m}.
+
+{title:Methods and formulas}
+
+{p}
+(see http\\:www.pse.ens.fr\senior\gurgand\selmlog13.htm for details)
+
+{p}
+The regression of interest is y = xb + u, with V(u)=s2.
+
+{p}
+y is observed only if category 1 (say) is chosen among K alternatives. This happens when y*1 > max(y*j), with y*j = zaj + vj, for j=1 to K.
+
+{p}
+When the residuals (vj) are assumed independent and identically Gumbel distributed, this leads to the multinomial logit model.
+
+{p}
+Let Pj be the probability that category j is chosen. All methods considered here include a selectivity correction term of the form y = xb + h(P1...PK) + e.
+
+{p}
+The Lee method assumes: h(P1...PK)=-s*c*normd(invnorm(P1))/P1, where c is a covariance parameter. The program generates _m1= normd(invnorm(P1))/P1 and estimates (-s*c). s2 and c are then recovered.
+
+{p}
+The Dubin-McFadden method ({cmd:dmf(0)}) assumes: h(P1...PK)=s*r2*(_m2)+...+s*rK*(_mK) where mj=Pj*log(Pj)/(1-Pj)+ log(P1), j>2, and rj is the correlation coefficient between u and (vj-v1). The program estimates (s*r2) to (s*rK). s2 and r2 to rK are then recovered.
+
+{p}
+The Dubin-McFadden first variant ({cmd:dmf(1)}) assumes: h(P1...PK)=s*r1*(_m1)+...+s*rK*(_mK) where _m1=log(P1) and _mj=Pj*log(Pj)/(1-Pj), j>2, and rj is the correlation coefficient between u and (vj). The program estimates (s*r1) to (s*rK). s2 and r1 to rK are then recovered.
+
+{p}
+For the second Dubin-McFadden variant ({cmd:dmf(2)}), define the transformed normally distributed residuals: v*j = invnorm(G(vj)), for j=1 to K, where G(.) is the cumulative of the Gumbel distribution. Bourguignon, Fournier and Gurgand (2004) show that h(P1...PK)=s*r1*_m1 + ... + s*rK*_mK. The program estimates (s*r1) to (s*rK). s2 and r1 to rK are then recovered.
+
+{p}
+The _m1 to _mK variables involve numerical integrals that are computed using Gauss-Laguerre quadrature. The abscissas and weight factors used in the program are from Davis and Polonsky (1964).
+
+{p}
+In this program, the second step regressions are estimated by linear least squares and the standard error s2 is not estimated separately from the correlation coefficients.
+
+{p}
+Neither are the latter constrained between -1 and 1. However, implied s2 and correlations are presented in the output.
+
+{p}
+In the second step model, the residual e is heteroscedastic. Weights for the weighted least squares estimates are detailed in Bourguignon, Fournier and Gurgand (2004), appendix 2. s2 and correlations can be recovered based on the formulas there.
+
+{p}
+For the Dahl method ({cmd:dhl}) when the option {it:all} is absent, h(P1...PK)=f(P1) where f() is a polynom, the order of which is user-supplied.
+
+{p}
+With the option "all", h(P1...PK) is a polynomial function of all probabilities interacted up to the user-supplied order.
+
+{title:References}
+
+{p}
+Bourguignon F., Fournier M. and Gurgand M., Selection Bias Corrections Based on the Multinomial Logit Model: Monte-Carlo comparisons, mimeo Delta, 2004 (download from http\\:www.pse.ens.fr\senior\gurgand\selmlog13.htm).
+
+{p}
+Dahl G. B., "Mobility and the Returns to Education: Testing a Roy Model with Multiple Markets", Econometrica, vol. 70, 2367-2420, 2003.
+
+{p}
+Davis Ph. and Polonsky I., "Numerical Interpolation Differentiation and Integration" in Abramovitz M. and Stegun I.A. (Eds.), Handbook of Mathematical Functions, National Bureau of Standards - Applied mathematics series 55, 1964.
+
+{p}
+Dubin J.A. & McFadden D.L., "An Econometric Analysis of Residential Electric Appliance Holdings and Consumption", Econometrica, vol. 52, 345-362, 1984.
+
+{p}
+Lee L.F., "Generalized Econometric Models with Selectivity", Econometrica, vol. 51, 507-512, 1983.
+
+{title:Authors}
+
+{p}
+Marc Gurgand, PSE-CNRS and CREST-INSEE (France) & Martin Fournier, CEFC (Hong-Kong) and Universite d'Auvergne (France). Contact: Marc Gurgand, gurgand@pse.ens.fr
+{p_end} 
