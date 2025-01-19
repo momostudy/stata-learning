@@ -1,0 +1,75 @@
+{smcl}
+{* 26jan2012}{...}
+{cmd:help nardl}
+{hline}
+
+{title:Title}
+
+    {hi:nardl} {hline 2} Estimation of non-linear ARDL models advanced by Shin et al. (2011)
+
+
+{title:Syntax}
+
+{p 8 17 2}
+{cmdab:nardl} 
+{varlist}
+{ifin}
+{cmd:,} [{it:options}]
+
+
+{synoptset 20 tabbed}{...}
+{synopthdr}
+{synoptline}
+{synopt:{opt p(integer)}}lag order for dependent variable (in levels){p_end}
+{synopt:{opt q(integer)}}lag order for all exogenous variables in "distributed lag part" (in levels){p_end}
+{synopt:{opt det:erministic(varlist)}}other exogenous regressors for 1st difference equation, e.g. season dummies{p_end}
+{synopt:{opt h:orizon(integer)}}time horizon for calculation of multipliers{p_end}
+{synopt:{opt plot}}visualize cumulative dynamic multipliers{p_end}
+{synopt:{opt br:ief}}do not plot coefficients table{p_end}
+{synopt:{opt res:iduals}}save the residuals as variable {it:nardlres}{p_end}
+{synopt:{opt boot:strap(integer)}}number of bootstrap replications for asymmetry plot (default 0, i.e. no bootstrap){p_end}
+{synopt:{opt le:vel(cilevel)}}confidence level (in %) for bootstrapping{p_end}
+{synopt:{opt constraints(list)}}constraints on coefficients (see below for variable naming convention){p_end}
+{synoptline}
+
+{p2colreset}{...}
+{p 4 6 2}
+
+{title:Description}
+
+{pstd} Estimates a non-linear autoregressive distributed lag (NARDL) model to model asymmetric response. 
+The framework is described in Shin et al. (2011), especially equ. 2.7. Notice that an intercept term
+is included in the model, and additional controls can be added with the {cmd: deterministic} option.
+{p_end} 
+{pstd}The {it:varlist} should contain the dependent variable followed by the exogenous variables, all in levels and without partial sum decomposition. {p_end} 
+{pstd}In the output variables are renamed to _y (endogenous variable), _x1p, _x2p,... (sum of positive changes in exogenous variables 1,2,...), and _x1n, _x2n,... (sum of negative changes in exogenous variables 1,2,...). A "d" in the variable name indicates first differences. Symmetry constraints or zero constraints may be implemented with the {cmd:constraints} option.
+{p_end}  
+{pstd} The cumulative dynamic multipliers for positive and negative changes in exogenous variables are stored in {cmd:e(nardl_cdm)} and can be plotted with the {cmd:plot} option. Asymmetries are stored in {cmd:e(nardl_asym)}. If
+the {cmd: bootstrap} option is used, the lower and upper bounds of the respective confidence intervals are stored
+in {cmd: e(nardl_asym_ql)} and {cmd: e(nardl_asym_qu)}.
+{p_end}
+
+{title:Examples}
+
+{phang}{cmd:. nardl un ip, p(4) q(5) deterministic(dmon2-dmon12) horizon(80) residuals}{p_end} 
+
+{phang}{it:long-run symmetry constraints:}{p_end}
+{phang}{cmd:. constraint 1 L1._x1p = L1._x1n}{p_end}
+{phang}{cmd:. constraint 2 L1._x2p = L1._x2n}{p_end}
+{phang}{cmd:. nardl pgas poil exch if tin(1991q1,2007q3), p(2) q(4) constraints(1/2) ///} {p_end}
+{phang}{cmd:    plot bootstrap(500) level(95)}{p_end}
+{phang}{cmd:. matrix list e(nardl_cdm)}{p_end}
+
+{title:Author}
+
+{phang}Stata implementation by Marco Sunder (sunder@wifa.uni-leipzig.de){p_end}
+{phang}This version was created on 26jan2012.
+
+
+{title:References}
+
+{phang}Shin, Y., Yu, B., Greenwood-Nimmo, M. (2011): Modelling asymmetric cointegration and dynamic multipliers in a nonlinear ARDL framework. Working paper (verison of November 2011), http://ssrn.com/abstract=1807745.
+{p_end}
+
+
+
