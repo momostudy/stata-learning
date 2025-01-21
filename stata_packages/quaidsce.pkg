@@ -1,0 +1,16 @@
+v 3
+d quaidsce Censored QUAIDS estimation.
+d Juan Caro, Universidad de Concepcion.
+d Juan Carlos Salgado, INSP Mexico.
+d Grace Melo, Texas A&M
+d Jose Alberto Molina, Universidad de Zaragoza.
+f lquaidsce.mlib
+f nlsur__quaidsce.ado
+f quaidsce.ado
+f quaidsce_c.ado
+f quaidsce_p.ado
+f quaidsce.sthlp
+f quaidsce_postestimation.sthlp
+f utils__quaidsce.mata
+f example.do
+f example.log
