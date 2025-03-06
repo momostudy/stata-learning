@@ -1,0 +1,385 @@
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+      name:  tvpregAl
+       log:  C:\Users\jamel\Dropbox\Latex\PROJECTS\24-09-commo-geopolitical-risks\Data and command\GPR\Al\tvpregAl.log
+  log type:  text
+ opened on:   4 Nov 2024, 18:23:48
+
+. 
+. ////////////// Execute the routine //////////////
+> qui do "tvpreg.ado"
+
+. /////////////////////////////////////////////////
+> 
+. *cd C:\Users\jamel\Dropbox\stata\tvpreg\tvpreg\code
+. 
+. set scheme sj
+
+. 
+. use datasetAl.dta, clear
+
+. des
+
+Contains data from datasetAl.dta
+ Observations:           476                  
+    Variables:            26                  23 Oct 2024 08:54
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Variable      Storage   Display    Value
+    name         type    format    label      Variable label
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+period          float   %tm                   
+GPR             double  %10.0g                Geopolitical Risks
+GPRT            double  %10.0g                Geopolitical Threats
+GPRA            double  %10.0g                Geopolitical Acts
+GECON           double  %10.0g                Global Economic Conditions
+GINF            double  %10.0g                Global Inflation
+GRATE           double  %10.0g                Global Interest Rates
+Al              double  %10.0g                Aluminium Price
+Cu              double  %10.0g                Copper Price
+Sn              double  %10.0g                Tin Price
+Ni              double  %10.0g                Nickel Price
+Zn              double  %10.0g                Zinc Price
+Pt              double  %10.0g                Platinium Price
+LGPR            float   %9.0g                 
+LGPRA           float   %9.0g                 
+LGPRT           float   %9.0g                 
+LGINF           float   %9.0g                 
+LAl             float   %9.0g                 
+epsilon1        double  %10.0g                Reduced-form shocks Al - GPR
+epsilon2        double  %10.0g                Residuals
+epsilon3        double  %10.0g                Residuals
+epsilon4        double  %10.0g                Residuals
+e1              double  %10.0g                Structural shocks Al - GPR
+e2              double  %10.0g                
+e3              double  %10.0g                
+e4              double  %10.0g                
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Sorted by: period
+
+. 
+. tsset period
+
+Time variable: period, 1985m1 to 2024m8
+        Delta: 1 month
+
+. 
+. foreach v in LGPR GECON LGINF LAl e1 {
+  2.     forvalues i = 1(1)12 {
+  3.         gen `v'_l`i' = l`i'.`v'
+  4. }
+  5. }
+(1 missing value generated)
+(2 missing values generated)
+(3 missing values generated)
+(4 missing values generated)
+(5 missing values generated)
+(6 missing values generated)
+(7 missing values generated)
+(8 missing values generated)
+(9 missing values generated)
+(10 missing values generated)
+(11 missing values generated)
+(12 missing values generated)
+(1 missing value generated)
+(2 missing values generated)
+(3 missing values generated)
+(4 missing values generated)
+(5 missing values generated)
+(6 missing values generated)
+(7 missing values generated)
+(8 missing values generated)
+(9 missing values generated)
+(10 missing values generated)
+(11 missing values generated)
+(12 missing values generated)
+(1 missing value generated)
+(2 missing values generated)
+(3 missing values generated)
+(4 missing values generated)
+(5 missing values generated)
+(6 missing values generated)
+(7 missing values generated)
+(8 missing values generated)
+(9 missing values generated)
+(10 missing values generated)
+(11 missing values generated)
+(12 missing values generated)
+(1 missing value generated)
+(2 missing values generated)
+(3 missing values generated)
+(4 missing values generated)
+(5 missing values generated)
+(6 missing values generated)
+(7 missing values generated)
+(8 missing values generated)
+(9 missing values generated)
+(10 missing values generated)
+(11 missing values generated)
+(12 missing values generated)
+(3 missing values generated)
+(4 missing values generated)
+(5 missing values generated)
+(6 missing values generated)
+(7 missing values generated)
+(8 missing values generated)
+(9 missing values generated)
+(10 missing values generated)
+(11 missing values generated)
+(12 missing values generated)
+(13 missing values generated)
+(14 missing values generated)
+
+. 
+. gen dummyGFC = 0
+
+. replace dummyGFC = 1 if period > tm(2009m6)
+(182 real changes made)
+
+. lab var dummyGFC "Post-GFC"
+
+. 
+. summ GPR, detail
+
+                     Geopolitical Risks
+-------------------------------------------------------------
+      Percentiles      Smallest
+ 1%         45.4          39.05
+ 5%        55.59          42.69
+10%        65.53             44       Obs                 476
+25%        79.45          45.06       Sum of wgt.         476
+
+50%        91.52                      Mean           101.5414
+                        Largest       Std. dev.      47.53233
+75%       110.39         358.71
+90%       140.37         379.25       Variance       2259.322
+95%       162.12         498.65       Skewness       4.298439
+99%       339.36         512.53       Kurtosis       30.51011
+
+. gen dummyGPR = 0
+
+. replace dummyGPR = 1 if GPR > `r(p90)'
+(47 real changes made)
+
+. lab var dummyGPR "High-GFC"
+
+. 
+. summ GECON, detail
+
+                 Global Economic Conditions
+-------------------------------------------------------------
+      Percentiles      Smallest
+ 1%    -1.736247      -4.467697
+ 5%    -.6654296      -3.266629
+10%    -.4326625      -2.394717       Obs                 476
+25%    -.1195726      -2.153356       Sum of wgt.         476
+
+50%     .0824639                      Mean           .0175379
+                        Largest       Std. dev.         .4615
+75%     .2504911       .9365798
+90%     .4009748        .980115       Variance       .2129822
+95%     .5553192       .9960127       Skewness      -3.481576
+99%     .8742118       1.386385       Kurtosis       28.73608
+
+. gen dummyGECON = 0
+
+. replace dummyGECON = 1 if GECON < `r(p10)'
+(47 real changes made)
+
+. lab var dummyGECON "Low-GECON"
+
+. 
+. ///// Estimator II: TVP-LP /////
+> // Commo price rates to a one-unit geopolitical risk shock (GPR)
+. mat define cmat = (0,3,6,9,12,15)
+
+. tvpreg LAl e1 LGPR_l* GECON_l* LGINF_l* LAl_l* e1_l*, ///
+>  cmatrix(cmat) nhor(0/48) getband newey chol
+Running the Time-Varying-Parameter Estimation...
+The model is:
+
+    y(t+h) = B(h,t+h) × x(t) + e(t+h)
+
+ with horizon (h) includes 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48,
+      dependent variable   y(t) (1×1): LAl,
+      independent variable x(t) (62×1): e1 LGPR_l1 LGPR_l2 LGPR_l3 LGPR_l4 LGPR_l5 LGPR_l6 LGPR_l7 LGPR_l8 LGPR_l9 LGPR_l10 LGPR_l11 LGPR_l12 GECON_l1 GECON_l2 GECON_l3 GECON_l4 GECON_l5 GECON_l6 GECON
+> _l7 GECON_l8 GECON_l9 GECON_l10 GECON_l11 GECON_l12 LGINF_l1 LGINF_l2 LGINF_l3 LGINF_l4 LGINF_l5 LGINF_l6 LGINF_l7 LGINF_l8 LGINF_l9 LGINF_l10 LGINF_l11 LGINF_l12 LAl_l1 LAl_l2 LAl_l3 LAl_l4 LAl_l5 L
+> Al_l6 LAl_l7 LAl_l8 LAl_l9 LAl_l10 LAl_l11 LAl_l12 e1_l1 e1_l2 e1_l3 e1_l4 e1_l5 e1_l6 e1_l7 e1_l8 e1_l9 e1_l10 e1_l11 e1_l12 _cons,
+      e(t+h) ~ N(0,σ(e,t+h)^2).
+
+The parameter is [vec(B(h,t+h)')',lnσ(e,t+h)]',
+
+The constant parameter model is estimated by OLS.
+
+. 
+. tvpplot, plotcoef(LAl:e1) plotconst name(e1_Al)
+Plotting the parameter path over horizons...
+slope para: effect of e1 on LAl
+
+. graph export e1_Al.png, as(png) width(4000) replace
+file e1_Al.png saved as PNG format
+
+. 
+. matrix tvlp_path=e(beta)
+
+. putexcel set GPR_Al
+file GPR_Al.xlsx already exists; you must specify either option modify or option replace
+r(602);
+
+end of do-file
+
+r(602);
+
+. do "C:\Users\jamel\AppData\Local\Temp\STD47a4_000000.tmp"
+
+. putexcel set GPR_Al, replace
+note: file will be replaced when the first putexcel command is issued.
+
+. putexcel A1=matrix(tvlp_path)
+file GPR_Al.xlsx saved
+
+. 
+. tvpplot, plotcoef(LAl:e1) plotconst period(dummyGFC) name(GFCTV)
+Plotting the parameter path over horizons...
+slope para: effect of e1 on LAl
+
+. tvpplot, plotcoef(LAl:e1) plotconst period(dummyGPR) name(GPRTV)
+Plotting the parameter path over horizons...
+slope para: effect of e1 on LAl
+
+. tvpplot, plotcoef(LAl:e1) plotconst period(dummyGECON) name(GECONTV)
+Plotting the parameter path over horizons...
+slope para: effect of e1 on LAl
+
+. 
+. foreach i in GFCTV GPRTV GECONTV {
+  2.  gr dis `i' 
+  3.  gr export `i'.png, as(png) width(4000) replace
+  4.  }
+file GFCTV.png saved as PNG format
+file GPRTV.png saved as PNG format
+file GECONTV.png saved as PNG format
+
+. 
+. 
+. forvalues i = 1(1)48 {
+  2. tvpplot, plotcoef(LAl:e1) plotnhor(`i') ///
+>  plotconst name(figAl_`i') period(dummyGECON)
+  3.  }
+Plotting the parameter path over time...
+slope para: effect of e1 on LAl
+Plotting the parameter path over time...
+slope para: effect of e1 on LAl
+Plotting the parameter path over time...
+slope para: effect of e1 on LAl
+Plotting the parameter path over time...
+slope para: effect of e1 on LAl
+Plotting the parameter path over time...
+slope para: effect of e1 on LAl
+Plotting the parameter path over time...
+slope para: effect of e1 on LAl
+Plotting the parameter path over time...
+slope para: effect of e1 on LAl
+Plotting the parameter path over time...
+slope para: effect of e1 on LAl
+Plotting the parameter path over time...
+slope para: effect of e1 on LAl
+Plotting the parameter path over time...
+slope para: effect of e1 on LAl
+Plotting the parameter path over time...
+slope para: effect of e1 on LAl
+Plotting the parameter path over time...
+slope para: effect of e1 on LAl
+Plotting the parameter path over time...
+slope para: effect of e1 on LAl
+Plotting the parameter path over time...
+slope para: effect of e1 on LAl
+Plotting the parameter path over time...
+slope para: effect of e1 on LAl
+Plotting the parameter path over time...
+slope para: effect of e1 on LAl
+Plotting the parameter path over time...
+slope para: effect of e1 on LAl
+Plotting the parameter path over time...
+slope para: effect of e1 on LAl
+Plotting the parameter path over time...
+slope para: effect of e1 on LAl
+Plotting the parameter path over time...
+slope para: effect of e1 on LAl
+Plotting the parameter path over time...
+slope para: effect of e1 on LAl
+Plotting the parameter path over time...
+slope para: effect of e1 on LAl
+Plotting the parameter path over time...
+slope para: effect of e1 on LAl
+Plotting the parameter path over time...
+slope para: effect of e1 on LAl
+Plotting the parameter path over time...
+slope para: effect of e1 on LAl
+Plotting the parameter path over time...
+slope para: effect of e1 on LAl
+Plotting the parameter path over time...
+slope para: effect of e1 on LAl
+Plotting the parameter path over time...
+slope para: effect of e1 on LAl
+Plotting the parameter path over time...
+slope para: effect of e1 on LAl
+Plotting the parameter path over time...
+slope para: effect of e1 on LAl
+Plotting the parameter path over time...
+slope para: effect of e1 on LAl
+Plotting the parameter path over time...
+slope para: effect of e1 on LAl
+Plotting the parameter path over time...
+slope para: effect of e1 on LAl
+Plotting the parameter path over time...
+slope para: effect of e1 on LAl
+Plotting the parameter path over time...
+slope para: effect of e1 on LAl
+Plotting the parameter path over time...
+slope para: effect of e1 on LAl
+Plotting the parameter path over time...
+slope para: effect of e1 on LAl
+Plotting the parameter path over time...
+slope para: effect of e1 on LAl
+Plotting the parameter path over time...
+slope para: effect of e1 on LAl
+Plotting the parameter path over time...
+slope para: effect of e1 on LAl
+Plotting the parameter path over time...
+slope para: effect of e1 on LAl
+Plotting the parameter path over time...
+slope para: effect of e1 on LAl
+Plotting the parameter path over time...
+slope para: effect of e1 on LAl
+Plotting the parameter path over time...
+slope para: effect of e1 on LAl
+Plotting the parameter path over time...
+slope para: effect of e1 on LAl
+Plotting the parameter path over time...
+slope para: effect of e1 on LAl
+Plotting the parameter path over time...
+slope para: effect of e1 on LAl
+Plotting the parameter path over time...
+slope para: effect of e1 on LAl
+
+.  
+. foreach i in 1 6 12 24 36 48 {
+  2.  gr dis figAl_`i'
+  3.  gr export figAl_`i'.png, as(png) width(4000) replace
+  4.  }
+file figAl_1.png saved as PNG format
+file figAl_6.png saved as PNG format
+file figAl_12.png saved as PNG format
+file figAl_24.png saved as PNG format
+file figAl_36.png saved as PNG format
+file figAl_48.png saved as PNG format
+
+. 
+. ****************************************************************
+. 
+. log close _all
+      name:  tvpregAl
+       log:  C:\Users\jamel\Dropbox\Latex\PROJECTS\24-09-commo-geopolitical-risks\Data and com
+> mand\GPR\Al\tvpregAl.log
+  log type:  text
+ closed on:   4 Nov 2024, 18:27:34
+----------------------------------------------------------------------------------------------
