@@ -1,0 +1,212 @@
+{smcl}
+{* 20december2018}{...}
+{* .hlp file for Stata versions 8 and 9}{...}
+{cmd:help tuples}
+{hline}
+
+{title:Title}
+
+{phang}
+{cmd:tuples} {hline 2} Select tuples from a list
+
+
+{title:Syntax}
+
+{p 8 16 2}
+{cmd:tuples} 
+{help tuples##list:{it:list}}
+[ {cmd:,} {it:options} ]
+
+
+{marker list}{...}
+{p 4 10 2}
+where {it:list}, if it is a {varlist}, is {help unab:unabbreviated}
+
+{synoptset 16 tabbed}{...}
+{marker opts}{...}
+{synopthdr}
+{synoptline}
+{syntab:List}
+{synopt:{opt asis}}treat {it:list} as is; do not unabbreviate
+{p_end}
+{synopt:{opt var:list}}treat {it:list} as {it:varlist}; issue an 
+error if it is not
+{p_end}
+
+{syntab:Selection}
+{synopt:{opt max(#)}}specify maximum number of items in a tuple 
+{p_end}
+{synopt:{opt min(#)}}specify minimum number of items in a tuple
+{p_end}
+
+{syntab:Reporting}
+{synopt:{opt di:splay}}show created tuples
+{p_end}
+
+{syntab:Method}
+{synopt:{opt nos:ort}}do not sort tuples
+{p_end}
+{synoptline}
+{p2colreset}{...}
+
+
+{title:Description}
+
+{pstd}
+{cmd:tuples} produces a set of {help macro:local macros}, each containing 
+a list of the items defining a tuple selected from a given list. 
+
+{pstd}
+By default the set of created macros is complete, other than the tuple 
+containing no selections. By default the given list is tried as a variable 
+list, but if it is not a variable list any other kind of list is acceptable,
+except that no other kind of expansion takes place.
+
+
+{title:Remarks} 
+
+{pstd} 
+Given a list of n items, {cmd:tuples} by default produces 2^n - 1 macros, 
+named {cmd:tuple1} upwards, which are all possible distinct singletons 
+(each individual item); all possible distinct pairs; and so forth. Thus 
+given {cmd:frog toad newt}, local macros {cmd:tuple1} through {cmd:tuple7} 
+contain 
+
+    {cmd:newt}
+    {cmd:toad} 
+    {cmd:frog} 
+    {cmd:toad newt} 
+    {cmd:frog newt} 
+    {cmd:frog toad} 
+    {cmd:frog toad newt} 
+
+{pstd}
+Here n = 3, 2^n - 1 = 7 = {cmd:comb(3,1) + comb(3,2) + comb(3,3)}. 
+
+{pstd} 
+Note that no tuple is the empty tuple with no selections. Users wishing
+to cycle over a set of tuples including the empty tuple can exploit the
+fact that the local macro {cmd:tuple0} is undefined, and so empty
+(unless the user has previously defined it explicitly), so that
+{cmd:tuple0} can be invoked with the correct result. 
+
+{pstd} 
+As usual, double quotes may be used to bind. Thus {cmd:"a b c" d e} is a
+list of three items, not five. 
+
+{pstd} 
+Remember that the number of possible macros will explode with the number
+of items supplied. For example, if 10 items are supplied, there will be
+1,023 macros. The number of macros created by {cmd:tuples} is returned
+in local macro {cmd:ntuples}. 
+
+{pstd}
+As of January 2011, {cmd:tuples} is declared to supersede Nicholas
+J. Cox's {cmd:selectvars}. 
+
+
+{title:Options} 
+
+{dlgtab:List}
+
+{phang}
+{opt asis} specifies that the list supplied should be treated as is, 
+and thus not {help unab:unabbreviated} as a {help varlist}. {opt asis} 
+may not be combined with {opt varlist}.
+
+{phang}
+{opt varlist} specifies that the list supplied should be a {help varlist}, 
+so that it is an error if the list is not in fact a varlist. {opt varlist} 
+may not be combined with {opt asis}.  
+
+{dlgtab:Selection}
+
+{phang}
+{opt max(#)} specifies a maximum value for the number of items 
+in a tuple. Default {it:#} is n, i.e., the number of items in 
+the supplied list.
+
+{phang}{opt min(#)} specifies a minimum value for the
+number of items in a tuple. Default {it:#} is {cmd:1}. 
+
+{dlgtab:Reporting}
+
+{phang}
+{cmd:display} specifies that tuples should be displayed.
+
+{dlgtab:Method}
+
+{phang}
+{cmd:nosort} produces tuples in a different sort order than the default 
+method. By default, {cmd:tuples} first produces all singletons, then all 
+distinct pairs, and so on. The {opt nosort} option produces tuples in a 
+different sort order but it produces them more quickly.
+
+
+{title:Examples}
+
+{pstd}
+{cmd:Example 1}
+
+{pstd}
+Obtain all possible tuples from a list 
+
+{phang2}{cmd:. tuples a b c d, asis}{p_end}
+
+{pstd}
+{cmd:Example 2}
+
+{pstd}
+Same as above, different sort order
+
+{phang2}{cmd:. tuples a b c d, asis nosort}{p_end}
+
+{pstd}
+{cmd:Example 3}
+
+{pstd}
+Use {cmd:tuples} to collect and display {cmd:e(r2)} following 
+{cmd:regress}
+
+{phang2}{cmd:. sysuse auto, clear}{p_end}
+{phang2}{cmd:. generate rsq = .}{p_end}
+{phang2}{cmd:. generate predictors = ""}{p_end}
+{phang2}{cmd:. tuples headroom trunk length displacement}{p_end}
+{phang2}{cmd:. quietly forvalues i = 1/`ntuples' {c -(}}{p_end}
+{phang2}{cmd:. {space 8}regress mpg `tuple`i''}{p_end}
+{phang2}{cmd:. {space 8}replace rsq = e(r2) in `i'}{p_end}
+{phang2}{cmd:. {space 8}replace predictors = "`tuple`i''" in `i'}{p_end}
+{phang2}{cmd:. {c )-}}{p_end}
+{phang2}{cmd:. generate p = wordcount(predictors) if predictors != ""}{p_end}
+{phang2}{cmd:. sort p rsq}{p_end}
+{phang2}{cmd:. list predictors rsq in 1/`ntuples'}
+{p_end}
+
+
+{title:Authors}
+
+{pstd}
+Joseph N. Luchman, Fors Marsh Group LLC{break}
+jluchman@forsmarshgroup.com
+
+{pstd}
+Daniel Klein, INCHER-Kassel, Universit{c a:}t Kassel{break}
+klein.daniel.81@gmail.com
+
+{pstd}
+Nicholas J. Cox, Durham University{break} 
+n.j.cox@durham.ac.uk
+
+
+{title:Acknowledgments} 
+
+{pstd}
+Sebastian Orbe reported a problem which led to a bug fix.  
+Volodymyr Vovchack suggested including the {cmd:min()} option. 
+
+
+{title:Also see}
+
+{psee}
+Online: {helpb foreach}
+{p_end}
