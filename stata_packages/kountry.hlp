@@ -1,0 +1,170 @@
+{smcl}
+{hline}
+help for{hi: kountry} {right:also see:    {help kountryadd:kountryadd}    }
+{right:{help kountrybackup:kountrybackup} }
+{right:{help kountrynames:kountrynames}  }
+{right:{help kountryregions:kountryregions}}
+{hline}
+
+{title:Description}
+
+{p 0 3}The {hi:kountry} command performs the following tasks:
+
+{p 3 5}1. It standardizes country names from various sources which makes it much easier to merge datasets that use
+different spellings, abbreviations, and numeric codes for the same country,
+
+{p 3 5}2. It converts country names from one coding scheme to another, and
+
+{p 3 5}3. It generates a "geographical region" variable.
+
+{p 0 5}The three features are described in detail below.
+
+
+{title:Syntax} 
+
+{p 3 5}{cmd:kountry} {it:country_var}
+		{cmd:,} {hi:from(}{it:database_name} | {hi:other)} [{hi:to(}{it:database_name}{hi:)}
+		{hi:geo(}{it:geo_option}{hi:)} {hi:{ul on}m{ul off}arker {ul on}st{ul off}uck}]
+
+
+{p 3 5}{it:country_var} is the variable that contains the country codes or names you wish to 
+standardize. {it:country_var} can be character or numeric. 
+
+{p 3 5}{hi:from()} is always required.  It specifies the database your {it:country_var} comes from.  Use 
+{hi:other} if you cannot identify the database.  The new variable containing standardized names is 
+called {hi:NAMES_STD}.  See {help kountry##table1:Table 1} below for a list of supported {it:database_name}s and their abbreviations.
+See {help kountrynames} for a list of standardized country names.
+
+{p 3 5}{hi:to()} specifies the coding scheme {it:country_var} is to be converted to. This option generates a new 
+variable called {hi:_VAR_} where VAR is a capitalized {it:database_name} keyword.  For example, if the user specifies 
+{hi:to(marc)}, the new variable will be called {hi:_MARC_}. See {help kountry##table1:Table 1} for a list of 
+supported {it:database_name}s.
+
+{p 3 5}{hi:geo()} generates a variable called {hi:GEO} that assigns a country to 
+a geographical region.  See {help kountry##table2:Table 2} below for a list of supported {it:geo_option}s.
+
+{p 3 5}{hi:marker} generates a variable called {hi:MARKER} that takes on the value of 1 if a given 
+country name was standardized successfully, 0 otherwise.  {hi:MARKER} makes it easy to see which names failed to standardize
+as the user, after running the command, can type:{p_end}
+
+{col 5}{cmd:. tabulate {it:country_var} if MARKER==0}
+
+{p 3 5}{hi:stuck} is explained {help kountry##stuck:below}
+
+
+{marker table1}{title:Supported coding schemes}
+
+{p 0 3}As of 8/19/2011 country names ("character") and codes ("numerical") from the following sources are supported:
+
+
+{p 3}Table 1: Supported data sets{p_end}
+{col 4}{dup 66:{c -}}
+{col 51}{it:database_name}
+{col 4}Dataset{col 46}character{col 61}numerical{col 72}
+{col 4}{dup 66:{c -}}
+{col 5}Correlates of War{col 46}{hi:cowc}{col 61}{hi:cown}
+{col 5}EUGene{col 46}{hi:cowc}{col 61}{hi:cown}
+{col 5}International Crisis Behavior{col 61}{hi:cown}
+{col 5}IMF{col 61}{hi:imfn}
+{col 5}ISO 3166 alpha-2{col 46}{hi:iso2c}
+{col 5}ISO 3166 alpha-3{col 46}{hi:iso3c}
+{col 5}ISO 3166 numeric{col 61}{hi:iso3n}
+{col 5}McClelland{col 46}{hi:mcc}
+{col 5}MARC (Library of Congress){col 46}{hi:marc}
+{col 5}MARGene{col 61}{hi:cown}
+{col 5}Militarized Interstate Disputes{col 61}{hi:cown}
+{col 5}National Capabilities{col 46}{hi:capc}
+{col 5}Penn World Table{col 46}{hi:penn}
+{col 5}Polity IV{col 61}{hi:cown}
+{col 5}World Bank{col 46}{hi:iso3c}
+{col 5}UNCTAD{col 46}{hi:unc}
+{col 5}UN Stats{col 61}{hi:iso3n}
+     
+{col 5}Type {hi:other} to convert character names from any other databases
+{col 4}{dup 66:{c -}}
+
+
+{p 0 3}{hi:other} cannot be specified if {hi:to()} and {hi:from()} are used concurrently.
+The reason for this is that there is no one-to-one mapping from {hi:from(other)} to {hi:to()}.
+
+{p 0 3} {hi:to()} makes use of the {hi:kountry.dta} dataset which should reside in your 
+ado/plus/k folder or directory.  {help ssc install} should automatically place {hi:kountry.dta} in the right
+location.  See {help sysdir} if Stata is not able to load {hi:kountry.dta}.
+
+
+{marker stuck}{title:stuck}
+
+{p 0 3}Use the {hi:stuck} option when your {it:country_var} is a bunch of long names and it is impossible to use 
+{hi:to()}.  {hi:stuck} converts {it:country_var} to {hi:NAMES_STD}, then converts {hi:NAMES_STD} to
+{hi:_ISO3N_}.  From there, you can translate {hi:_ISO3N_} into any dataset listed {help kountry##table1:above}.
+
+{p 0 3}The syntax with {hi:stuck} is
+
+{p 3 5}{cmd:kountry} {it:country_var}{cmd:, from(other) stuck [marker]}
+
+{p 0 5}{hi:marker} will mark the observations that failed to standardize in the first step.
+
+
+{marker table2}{title:geo() choices}
+
+{p 0 3}As of 8/19/2011, the following regions can be specified:
+
+{p 3}Table 2: Geographical regions{p_end}
+{col 4}{dup 66:{c -}}
+{col 4}{it:geo_option}{col 25}description{col 72}
+{col 4}{dup 66:{c -}}
+{col 5}{hi:cow}{col 25}Correlates of War "home regions"
+{col 5}{hi:marc}{col 25}MARC (Library of Congress) regions
+{col 5}{hi:men}{col 25}Middle East "narrow"
+{col 5}{hi:meb}{col 25}Middle East "broad" (incl. North Africa)
+{col 5}{hi:sov}{col 25}makes a separate post-Soviet region
+{col 5}{hi:un}{col 25}UN Stats
+{col 5}{hi:undet}{col 25}UN Stats, detailed
+{col 4}{dup 66:{c -}}
+
+{p 0 3}See {help kountryregions} for further notes on geographical regions. 
+
+
+{title:Notes and warnings}
+
+{p 0 3}Make sure numeric codes are stored as numeric variables, otherwise {hi:kountry} will not convert them
+properly. 
+
+{p 0 3}Whenever possible, I use the most current coding for a given country.  For example, 
+if you convert {hi:to(marc)}, Belarus will be recorded to {hi:bw} even though it
+was coded {hi:bwr} before June 1992.  The lack of one-to-one mapping is notorious for post Soviet states
+and other states that split or consolidated.
+
+{p 0 3}Here is an incomplete list of such cases.
+The Federal Republic of Germany and Prussia will both be recoded to Germany.
+Korea and South Korea will both be recoded to South Korea.
+The USSR, Soviet Union, and Russian Federation will all be recoded to Russia.
+Serbia and Serbia/Montenegro will be recoded to Yugoslavia.
+
+{p 0 3}On 9 July 2011, the {hi:736} UN and ISO code for Sudan was retired.  The new code is {hi:729}.
+For the time being, {hi:kountry} continues to use the old code.
+
+{title:Examples}
+
+{col 3}{inp:. kountry statename, from(other) m}
+
+{col 3}{inp:. kountry imfcode, from(imfn) to(marc)}
+
+{col 3}{inp:. kountry wbankcode, from(iso3c) geo(sov)}
+
+
+{title:References}
+
+{p 0 3}The command is described in more detail in Raciborski, R. (2008). "kountry: A Stata utility for
+merging cross-country data from multiple sources," The Stata Journal, 8(3), 390-400.
+
+
+{title:Author}
+
+{p 3}Rafal Raciborski{p_end}
+{p 3}Email: {browse "mailto:rraciborski@gmail.com":rraciborski@gmail.com}{p_end}
+
+
+{title:Also see}
+
+{col 3}Online:  {help kountryadd}, {help kountrybackup}, {help kountrynames}, {help kountryregions}

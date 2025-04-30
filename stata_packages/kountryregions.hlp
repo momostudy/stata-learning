@@ -1,0 +1,19 @@
+{smcl}
+{p 0 1}{ul:Further notes on geographical regions}
+
+
+{p 0 5}{hi:men} regions are identical to {hi:un} regions with the exception of the following
+countries reclassified to the Middle East region: Bahrain, Egypt, Iran, Iraq, Israel, Jordan,
+Kuwait, Lebanon, Oman, Palestine, Qatar, Saudi Arabia, Syria, Turkey, United Arab Emirates, and Yemen.
+ 
+{p 0 5}{hi:meb} is identical to {hi:men} with the exception of adding nine more countries to the Middle East region: 
+Afghanistan, Algeria, Djibouti, Mauritania, Morocco, Libya, Pakistan, Somalia, Sudan, Tunisia, and Western Sahara.
+
+{p 0 5}{hi:sov} is identical to {hi:men} with the exception of the following countries reclassified as 
+being post Soviet : Armenia, Azerbaijan, Belarus, Estonia, Georgia, Kazakhstan, Kyrgyz Republic, Latvia, 
+Lithuania, Moldova, Russia, Tajikistan, Turkmenistan, Ukraine, and Uzbekistan. 
+
+
+{title:Also see}
+
+{p 5}Online:  {help kountry}, {help kountrybackup}, {help kountryadd}, {help kountrynames}

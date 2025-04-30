@@ -1,0 +1,35 @@
+{smcl}
+{hline}
+help for{hi: kountrybackup} and {hi:kountryrestore} {right:(author: {hi:Rafal Raciborski})}
+{hline}
+
+{title:Description}
+
+{p 0 3}Use {hi:kountrybackup} to back up the existing custom dictionary of country names created 
+by {hi:{help kountryadd:kountryadd}}.  Use this command before reinstalling or
+updating the {hi:{help kountry:kountry}} command, as this process will overwrite your
+custom dictionary.  Use {hi:kountryrestore} after reinstalling or updating {help kountry:kountry}
+to restore the saved dictionary.
+
+
+{title:Syntax}
+
+{p 3 5}{cmd:kountrybackup} [, {hi:replace}]
+
+{p 6 8}{hi:replace} permits {hi:kountrybackup} to overwrite an existing backup file
+
+
+{p 3 5}{cmd:kountryrestore}
+
+{p 6 8}restores previously saved dictionary
+
+{title:Examples}
+
+{col 3}{inp:. kountrybackup, replace}
+{col 5}({it:reinstall kountry})
+{col 3}{inp:. kountryrestore}
+
+
+{title:Also see}
+
+{col 3}Online:  {help kountry}, {help kountryadd}, {help kountrynames}, {help kountryregions}

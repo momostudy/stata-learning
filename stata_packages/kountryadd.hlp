@@ -1,0 +1,35 @@
+{smcl}
+{hline}
+help for{hi: kountryadd} {right:(author: {hi:Rafal Raciborski})}
+{hline}
+
+{title:Description}
+
+{p 0 3}The {hi:kountryadd} command adds alternative country name spellings to the 
+{hi:{help kountry:kountry}} command.
+
+
+{title:Syntax}
+
+{p 3 5}{cmd:kountryadd}  {hi:"}{it:failed name}{hi:" to}  {hi:"}{it:standardized name}{hi:" add}
+
+{p 5}where
+
+{p 3 5}{it:failed name} represents country name that failed to standardize after the 
+{hi:kountry} {it:country_var}{hi:, from(other)} command was issued
+
+{p 3 5}{it:standardized name} represents one of the {it:{help kountrynames:standardized country names}}
+
+{p 3 5}Double quotes are required.
+
+
+{title:Examples}
+
+{col 3}{inp:. kountryadd "Netherlands, The" to "Netherlands" add}
+
+{col 3}{inp:. kountryadd "korea (south)" to "South Korea" add}
+
+
+{title:Also see}
+
+{col 3}Online:  {help kountry}, {help kountrybackup}, {help kountrynames}, {help kountryregions}
