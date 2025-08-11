@@ -1,0 +1,2 @@
+{smcl}
+INCLUDE help nwxtregress
