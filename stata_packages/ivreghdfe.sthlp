@@ -1,5 +1,5 @@
 {smcl}
-{* *! version 1.0.0  07jul2018}{...}
+{* *! version 1.1.1 14Dec2021}{...}
 {vieweralsosee "ivreg" "help ivreg2"}{...}
 {vieweralsosee "reghdfe" "help reghdfe"}{...}
 {vieweralsosee "ftools" "help ftools"}{...}
@@ -22,11 +22,11 @@ To use {cmd:ivreghdfe}, you must have installed three packages: {cmd: ftools}, {
 (see the {browse "https://github.com/sergiocorreia/ivreghdfe#installation":online guide}). 
 
 {pstd}
-You can also pass additional optimization options to reghdfe, as suboptions within {opt absorb()}:
+You can also pass additional reghdfe optimization options directly:
 
 {phang2}{stata sysuse auto}{p_end}
-{phang2}{stata ivreghdfe price weight (length=gear), absorb(rep78, tol(1e-6))}{p_end}
-{phang2}{stata ivreghdfe price weight (length=gear), absorb(rep78, accel(none))}{p_end}
+{phang2}{stata ivreghdfe price weight (length=gear), absorb(rep78) tol(1e-6)}{p_end}
+{phang2}{stata ivreghdfe price weight (length=gear), absorb(rep78) accel(none)}{p_end}
 
 
 {title:Citation}
@@ -40,6 +40,11 @@ ivreg2: Stata module for extended instrumental variables/2SLS, GMM and AC/HAC, L
 {phang}Correia, Sergio. 2017.
 Linear Models with High-Dimensional Fixed Effects: An Efficient and Feasible Estimator (Working Paper)
 {browse "https://github.com/sergiocorreia/reghdfe/#citation":https://github.com/sergiocorreia/reghdfe/#citation}{p_end}
+
+
+{title:Support for margins}
+
+Note that there is experimental support for the {cmd:margins} postestimation command, but it hasn't been tested with advanced options such as nonlinear expressions.
 
 
 {title:Feedback}
