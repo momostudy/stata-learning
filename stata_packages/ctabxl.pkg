@@ -1,0 +1,21 @@
+v 3
+d {bf:ctabxl}: Tabulate Pearson and Spearman correlations in Excel
+d
+d {bf:ctabxl} provides a variety of options for tabulating Pearson and Spearman correlations in Excel.
+d These options are designed to:
+d
+d      (1) streamline the process of communicating results to coauthors, and
+d      (2) minimize time spent transposing correlations to Word.
+d
+d After installation, type {bf:help ctabxl} for a comprehensive help file.
+d
+d Additional information and illustrative examples provided at {browse "www.zach.prof":zach.prof}.
+d 
+d Author: Zachary King
+d
+d Version: 1.1
+d Distribution-Date: July 17, 2023
+d License: MIT
+d 
+F ctabxl.ado
+F ctabxl.sthlp

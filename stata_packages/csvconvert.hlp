@@ -1,0 +1,129 @@
+{smcl}
+{* 13Jan2014}{...}
+{* Program written by Alberto A. Gaggero alberto.gaggero@unipv.it}{...}
+{cmd:help csvconvert}{right: ({browse "http://www.stata-journal.com/article.html?article=dm0076":SJ14-3: dm0076})}
+{hline}
+
+{title:Title}
+
+{p2colset 5 19 21 2}{...}
+{p2col:{cmd:csvconvert} {hline 2}}A command for gathering multiple comma-separated values (.csv) files into one Stata (.dta) dataset{p_end}
+{p2colreset}{...}
+
+
+{title:Syntax}
+
+{p 8 18 2}
+{opt csvconvert}
+{it:input_directory}{cmd:,} {cmd:replace} [{opt input_file(filenames)}
+{opt output_dir(output_directory)}
+{opt output_file(filename)}]
+
+{pstd}
+Note: All {cmd:.csv} files must be placed in the same directory;
+{it:input_directory} is the directory where the {cmd:.csv} files must be
+stored.
+
+
+{title:Description}
+
+{pstd}
+{cmd:csvconvert} appends a set of {cmd:.csv} files into one file, which
+is saved in the {cmd:.dta} format and immediately readable into Stata.
+This command meets the need of a researcher who holds multiple data
+files differing by, for example, a period variable, such as year.
+
+{pstd}
+By default, {cmd:csvconvert} creates a new variable, {cmd:_csvfile},
+that contains the name of the {cmd:.csv} file from which the observation
+originates.  At the end of the process, {cmd:csvconvert} displays a
+message with the number of the original {cmd:.csv} files that have been
+included in the {cmd:.dta} file (this information can be useful to
+confirm that all the {cmd:.csv} files have been converted into the
+{cmd:.dta} file).
+
+{pstd}
+Once the process has been completed, type {cmd:note} to read the full
+list of {cmd:.csv} files included in the {cmd:.dta} file.
+
+
+{title:Options}
+
+{phang}
+{cmd:replace} specifies that the existing output file (if it already
+exists) be overwritten.  {cmd:replace} is required.
+
+{phang}
+{opt input_file(filenames)} specifies a subset of the {cmd:.csv} files
+to be converted.  The {it:filenames} must be separated by a space and
+must include the {cmd:.csv} extension.  If this option is not specified,
+{cmd:csvconvert} considers all the {cmd:.csv} files stored in the input
+directory.
+
+{phang}
+{opt output_dir(output_directory)} specifies the directory in which the
+{cmd:.dta} output file is saved.  If this option is not specified, the
+file is saved in the same directory where the {cmd:.csv} files are
+stored.
+
+{phang}
+{opt output_file(filename)} specifies the name of the {cmd:.dta} output
+file.  The default is {cmd:output_file(output.dta)}.
+
+
+{title:Examples}
+
+{pstd}
+Download the trial sample from 
+{browse "https://sites.google.com/site/albertogaggero/research/software":my webpage}, and store it in a directory you created -- for example,
+{cmd:C:\data\world bank}
+
+{pstd}
+Display the list of {cmd:.csv} files contained in the directory{p_end}
+{phang2}{cmd:. dir C:\data\world bank\*.csv}
+
+{pstd}
+The following command creates the file {cmd:output.dta} and saves it in
+the directory {cmd:C:\data\world bank}{p_end}
+{phang2}{cmd:. csvconvert C:\data\world bank, replace}
+
+{pstd}
+Display the full list of {cmd:.csv} files that have been converted and
+that are contained in {cmd:output.dta}{p_end}
+{phang2}{cmd:. note}
+
+{pstd}
+The following command creates the file {cmd:wb_data.dta} and saves it in
+the directory {cmd:C:\data\wb dataset}{p_end}
+{phang2}{cmd:. csvconvert C:\data\world bank, replace output_file(wb_data.dta) output_dir(C:\data\wb dataset)}
+
+{pstd}
+The following command includes only the selected {cmd:.csv} files,
+{cmd:wb2008.csv} and {cmd:wb2009.csv}, in {cmd:output.dta}{p_end}
+{phang2}{cmd:. csvconvert C:\data\world bank, replace input_file(wb2008.csv wb2009.csv)}
+
+{pstd}
+Similar to the commands above, the files {cmd:wb2008.csv} and
+{cmd:wb2009.csv} are contained in {cmd:wb_data.dta}, which is saved in
+{cmd:C:\data\wb dataset}{p_end}
+{phang2}{cmd:. csvconvert C:\data\world bank, replace input_file(wb2008.csv wb2009.csv) output_file(wb_data.dta) output_dir(C:\data\wb dataset)}
+
+
+{title:Author}
+
+{pstd}Alberto A. Gaggero{p_end}
+{pstd}Department of Economics and Management{p_end}
+{pstd}University of Pavia{p_end}
+{pstd}Pavia, Italy{p_end}
+{pstd}alberto.gaggero@unipv.it{p_end}
+
+
+{title:Also see}
+
+{p 4 14 2}Article:  {it:Stata Journal}, volume 14, number 3: {browse "http://www.stata-journal.com/article.html?article=dm0076":dm0076}
+
+{p 5 14 2}Manual:  {manlink D append}, {manlink D import delimited}
+
+{p 7 14 2}Help:  {manhelp append D},
+{manhelp import_delimited D:import delimited}
+{p_end}
